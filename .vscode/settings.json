@@ -1,0 +1,15 @@
+{
+  "python.analysis.extraPaths": [
+    "/Users/moulisrivastava/Desktop/Foundry/backend"
+  ],
+  "python.autoComplete.extraPaths": [
+    "/Users/moulisrivastava/Desktop/Foundry/backend"
+  ],
+  "python.testing.pytestEnabled": true,
+  "python.testing.pytestArgs": [
+    "backend"
+  ],
+  "python.testing.unittestEnabled": false,
+  "python.testing.nosetestsEnabled": false,
+  "python.defaultInterpreterPath": "/Users/moulisrivastava/Desktop/Foundry/backend/venv/bin/python"
+}

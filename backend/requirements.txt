@@ -19,5 +19,9 @@ bcrypt
 passlib
 pyjwt
 pytest
+pytest-asyncio
+email-validator
+python-multipart
+greenlet
 slowapi
 httpx
