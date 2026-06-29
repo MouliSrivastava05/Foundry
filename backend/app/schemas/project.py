@@ -18,6 +18,7 @@ class ProjectUpdate(BaseModel):
 class ProjectResponse(ProjectBase):
     id: int
     version: int
+    status: str
     created_by: int
     created_at: datetime.datetime
 

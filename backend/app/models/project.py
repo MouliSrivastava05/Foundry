@@ -11,6 +11,7 @@ class Project(Base):
     idea: Mapped[str] = mapped_column(Text, nullable=False)
     industry: Mapped[str] = mapped_column(String(100), nullable=True)
     version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    status: Mapped[str] = mapped_column(String(50), default="idle", nullable=False)
     created_by: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     created_at: Mapped[datetime.datetime] = mapped_column(
         DateTime, default=datetime.datetime.utcnow, nullable=False

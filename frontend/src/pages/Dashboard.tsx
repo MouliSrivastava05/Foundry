@@ -57,12 +57,77 @@ export const Dashboard: React.FC = () => {
     fetchProjects()
   }, [isDemo])
 
+  const [realOutputs, setRealOutputs] = useState<any>(null)
+
+  // Format DB outputs into expected frontend structure
+  const processOutputs = (dbOutputs: any[]) => {
+    const formatted: any = {
+      prd: null,
+      personas: [],
+      userStories: [],
+      prioritization: { mustHave: [], shouldHave: [], couldHave: [] }
+    }
+    
+    if (!dbOutputs || dbOutputs.length === 0) return formatted
+    
+    const latestVersion = Math.max(...dbOutputs.map(o => o.version))
+    const latestOutputs = dbOutputs.filter(o => o.version === latestVersion)
+    
+    for (const output of latestOutputs) {
+      const parsed = output.parsed_output
+      if (output.agent_name === 'PRD_Agent') {
+        formatted.prd = parsed
+      } else if (output.agent_name === 'Persona_Agent') {
+        formatted.personas = parsed.personas || []
+      } else if (output.agent_name === 'Story_Agent') {
+        formatted.userStories = parsed.stories || []
+      } else if (output.agent_name === 'Prioritization_Agent') {
+        formatted.prioritization = {
+          mustHave: parsed.must_have || parsed.mustHave || [],
+          shouldHave: parsed.should_have || parsed.shouldHave || [],
+          couldHave: parsed.could_have || parsed.couldHave || []
+        }
+      }
+    }
+    return formatted
+  }
+
   // Select project
-  const handleSelectProject = (project: any) => {
+  const handleSelectProject = async (project: any) => {
     setSelectedProject(project)
-    setPipelineStep(-1)
-    setPipelineProgress(0)
-    setPipelineLogs([])
+    setRealOutputs(null)
+    
+    if (isDemo) {
+      setPipelineStep(-1)
+      setPipelineProgress(0)
+      setPipelineLogs([])
+      return
+    }
+
+    // Live mode project selection logic
+    if (project.status === 'completed') {
+      setPipelineStep(5)
+      setPipelineProgress(100)
+      setPipelineLogs(['✅ [SYS] Scaffolding pipeline executed successfully. Blueprint cached.'])
+      try {
+        const outRes = await api.get(`/projects/${project.id}/outputs`)
+        setRealOutputs(processOutputs(outRes.data))
+      } catch (err) {
+        console.error('Failed to fetch project outputs', err)
+      }
+    } else if (project.status === 'processing') {
+      setPipelineStep(0)
+      setPipelineProgress(10)
+      setPipelineLogs(['[SYS] Resuming active AI pipeline task monitoring...', '[SYS] Querying current agent logs...'])
+    } else if (project.status === 'failed') {
+      setPipelineStep(-2)
+      setPipelineProgress(0)
+      setPipelineLogs(['❌ [SYS] AI orchestrator execution failed. Please verify API configurations.'])
+    } else {
+      setPipelineStep(-1)
+      setPipelineProgress(0)
+      setPipelineLogs([])
+    }
   }
 
   // Create Project
@@ -129,16 +194,121 @@ export const Dashboard: React.FC = () => {
     setNewIndustry('')
   }
 
-  // Pipeline Simulation Trigger
-  const runPipeline = () => {
-    setPipelineStep(0)
-    setPipelineProgress(5)
-    setPipelineLogs(['[SYS] Initializing multi-agent orchestrator DAG...', '[SYS] Loading grounding schemas...'])
+  // Pipeline Simulation Trigger (Demo Mode) & Real Trigger (Live Mode)
+  const runPipeline = async () => {
+    if (isDemo) {
+      setPipelineStep(0)
+      setPipelineProgress(5)
+      setPipelineLogs(['[SYS] Initializing multi-agent orchestrator DAG...', '[SYS] Loading grounding schemas...'])
+      return
+    }
+
+    try {
+      setPipelineLogs(['[SYS] Contacting celery backend task runner...', '[SYS] Spawning LangGraph workflow DAG...'])
+      setPipelineStep(0)
+      setPipelineProgress(10)
+      
+      await api.post(`/projects/${selectedProject.id}/run`)
+      
+      const updatedProject = { ...selectedProject, status: 'processing' }
+      setSelectedProject(updatedProject)
+      setProjects(prev => prev.map(p => p.id === selectedProject.id ? updatedProject : p))
+    } catch (err) {
+      console.error('Failed to run AI pipeline', err)
+      setPipelineStep(-2)
+      setPipelineLogs(['❌ [SYS] Failed to trigger backend. Check Redis/Celery worker status.'])
+      alert('Error triggering pipeline run. Please verify that your backend workers and Redis are running.')
+    }
   }
 
-  // Simulation runner effect
+  // Polling hook for live mode
   useEffect(() => {
-    if (pipelineStep < 0 || pipelineStep >= 5) return
+    if (isDemo || !selectedProject || selectedProject.id < 0) return
+    if (selectedProject.status !== 'processing' && pipelineStep !== 0 && pipelineStep !== 1 && pipelineStep !== 2 && pipelineStep !== 3) return
+
+    let intervalId: any = null
+
+    const pollProjectStatus = async () => {
+      try {
+        const projRes = await api.get(`/projects/${selectedProject.id}`)
+        const currentProject = projRes.data
+        
+        const outRes = await api.get(`/projects/${selectedProject.id}/outputs`)
+        const formatted = processOutputs(outRes.data)
+        setRealOutputs(formatted)
+
+        const logs = ['[SYS] Initializing multi-agent orchestrator DAG...', '[SYS] Loading grounding schemas...']
+        let step = 0
+        let progress = 15
+
+        if (formatted.prd) {
+          logs.push('📝 [PRD Architect] PRD Specs generated successfully.')
+          step = 1
+          progress = 45
+        } else {
+          logs.push('🔍 [Market Scoper] Scraping trends and competitor indices...')
+          logs.push('📝 [PRD Architect] Scoping requirements and core feature list...')
+        }
+
+        if (formatted.personas && formatted.personas.length > 0) {
+          logs.push('👥 [Persona Agent] User personas generated successfully.')
+          step = 2
+          progress = 65
+        } else if (formatted.prd) {
+          logs.push('👥 [Persona Agent] Simulating customer behavior archetypes and goals...')
+        }
+
+        if (formatted.userStories && formatted.userStories.length > 0) {
+          logs.push('🎯 [Story Writer] Agile user stories generated successfully.')
+          step = 3
+          progress = 85
+        } else if (formatted.personas && formatted.personas.length > 0) {
+          logs.push('🎯 [Story Writer] Writing epic user stories and validation acceptance criteria...')
+        }
+
+        if (formatted.prioritization && formatted.prioritization.mustHave.length > 0) {
+          logs.push('⚡ [Prioritization Agent] Priority scores and sprint milestones calculated.')
+          step = 4
+          progress = 95
+        } else if (formatted.userStories && formatted.userStories.length > 0) {
+          logs.push('⚡ [Prioritization Agent] Calculating priority scores and sprint milestones...')
+        }
+
+        if (currentProject.status === 'completed') {
+          logs.push('✅ [SYS] Scaffolding pipeline executed successfully. Blueprint cached.')
+          step = 5
+          progress = 100
+          clearInterval(intervalId)
+          setProjects(prev => prev.map(p => p.id === currentProject.id ? currentProject : p))
+          setSelectedProject(currentProject)
+        } else if (currentProject.status === 'failed') {
+          logs.push('❌ [SYS] AI orchestrator execution failed. Please verify API configurations.')
+          step = -2
+          progress = 0
+          clearInterval(intervalId)
+          setProjects(prev => prev.map(p => p.id === currentProject.id ? currentProject : p))
+          setSelectedProject(currentProject)
+        }
+
+        setPipelineLogs(logs)
+        setPipelineProgress(progress)
+        setPipelineStep(step)
+      } catch (err) {
+        console.error('Error polling project status', err)
+      }
+    }
+
+    pollProjectStatus()
+    intervalId = setInterval(pollProjectStatus, 3000)
+
+    return () => {
+      if (intervalId) clearInterval(intervalId)
+    }
+  }, [selectedProject?.id, selectedProject?.status, isDemo])
+
+  // Simulation runner effect (Demo Mode only)
+  useEffect(() => {
+    if (!isDemo || pipelineStep < 0 || pipelineStep >= 5) return
 
     const stepDuration = 2000
     const steps = [
@@ -155,7 +325,6 @@ export const Dashboard: React.FC = () => {
       setPipelineProgress(current.progress)
       
       if (pipelineStep === 4) {
-        // Complete
         setTimeout(() => {
           setPipelineLogs(prev => [...prev, '✅ [SYS] Scaffolding pipeline executed successfully. Blueprint cached.'])
           setPipelineStep(5)
@@ -166,7 +335,9 @@ export const Dashboard: React.FC = () => {
     }, stepDuration)
 
     return () => clearTimeout(timer)
-  }, [pipelineStep])
+  }, [pipelineStep, isDemo])
+
+  const outputs = isDemo ? selectedProject?.outputs : realOutputs;
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-slate-950 text-slate-100 font-sans">
@@ -272,34 +443,49 @@ export const Dashboard: React.FC = () => {
 
             {/* Content Area */}
             <div className="flex-1 overflow-y-auto p-8">
-              {/* If Pipeline is running or completed */}
-              {pipelineStep >= 0 && pipelineStep < 5 ? (
-                /* RUNNING STATUS VIEW */
+              {/* If Pipeline is running, completed or failed */}
+              {(pipelineStep >= 0 && pipelineStep < 5) || pipelineStep === -2 ? (
+                /* RUNNING / ERROR STATUS VIEW */
                 <div className="max-w-3xl mx-auto space-y-8 py-12">
                   <div className="text-center space-y-3">
-                    <Activity className="h-10 w-10 text-purple-500 animate-spin mx-auto" />
-                    <h3 className="text-xl font-bold text-white">Orchestrating AI Workflow Agents</h3>
-                    <p className="text-sm text-slate-400">Building comprehensive product specification scaffolding...</p>
+                    {pipelineStep === -2 ? (
+                      <div className="h-12 w-12 rounded-xl bg-red-500/10 border border-red-500/30 text-red-500 mx-auto flex items-center justify-center font-bold text-2xl">⚠️</div>
+                    ) : (
+                      <Activity className="h-10 w-10 text-purple-500 animate-spin mx-auto" />
+                    )}
+                    <h3 className="text-xl font-bold text-white">
+                      {pipelineStep === -2 ? "Pipeline Execution Failed" : "Orchestrating AI Workflow Agents"}
+                    </h3>
+                    <p className="text-sm text-slate-400">
+                      {pipelineStep === -2 
+                        ? "An error occurred while compiling your product specs blueprint. Check console and env settings." 
+                        : "Building comprehensive product specification scaffolding..."}
+                    </p>
                   </div>
 
                   {/* Progress Bar */}
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-xs font-semibold text-slate-400">
-                      <span>Analyzing Concept</span>
-                      <span>{pipelineProgress}% Complete</span>
+                  {pipelineStep !== -2 && (
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-xs font-semibold text-slate-400">
+                        <span>Analyzing Concept</span>
+                        <span>{pipelineProgress}% Complete</span>
+                      </div>
+                      <div className="w-full h-2.5 bg-slate-900 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-500" 
+                          style={{ width: `${pipelineProgress}%` }}
+                        ></div>
+                      </div>
                     </div>
-                    <div className="w-full h-2.5 bg-slate-900 rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-500" 
-                        style={{ width: `${pipelineProgress}%` }}
-                      ></div>
-                    </div>
-                  </div>
+                  )}
 
                   {/* High Fidelity Logs Console */}
                   <div className="rounded-xl border border-slate-900 bg-black/50 p-5 font-mono text-xs text-purple-300 space-y-1.5 shadow-inner max-h-72 overflow-y-auto">
                     {pipelineLogs.map((log, i) => (
-                      <p key={i} className={log.startsWith('✅') ? 'text-emerald-400 font-semibold' : ''}>{log}</p>
+                      <p key={i} className={
+                        log.startsWith('✅') ? 'text-emerald-400 font-semibold' : 
+                        log.startsWith('❌') ? 'text-red-400 font-semibold' : ''
+                      }>{log}</p>
                     ))}
                   </div>
                 </div>
@@ -310,8 +496,14 @@ export const Dashboard: React.FC = () => {
                   <div className="rounded-xl border border-purple-500/10 bg-purple-500/5 p-4 flex items-start gap-3">
                     <Info className="h-5 w-5 text-purple-400 shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-sm font-semibold text-purple-300">Phase 1 Blueprint Generated</p>
-                      <p className="text-xs text-slate-400 mt-1">This blueprint was calculated locally by the mock AI pipeline. In the upcoming phases, the full pipeline will run via Redis & Celery.</p>
+                      <p className="text-sm font-semibold text-purple-300">
+                        {isDemo ? "Phase 1 Blueprint Generated" : "Orchestrated Blueprint Generated"}
+                      </p>
+                      <p className="text-xs text-slate-400 mt-1">
+                        {isDemo 
+                          ? "This blueprint was calculated locally by the mock AI pipeline. In the upcoming phases, the full pipeline will run via Redis & Celery."
+                          : "This blueprint was calculated asynchronously by your live backend LangGraph nodes and stored in PostgreSQL."}
+                      </p>
                     </div>
                   </div>
 
@@ -370,16 +562,16 @@ export const Dashboard: React.FC = () => {
 
                   {/* Tab Panels */}
                   <div className="py-4">
-                    {activeTab === 'prd' && (
+                    {activeTab === 'prd' && outputs?.prd && (
                       <div className="space-y-6 max-w-4xl">
                         <div className="space-y-2">
-                          <h3 className="text-xl font-bold text-white">{selectedProject.outputs.prd.title}</h3>
-                          <p className="text-slate-400 text-sm leading-relaxed">{selectedProject.outputs.prd.summary}</p>
+                          <h3 className="text-xl font-bold text-white">{outputs.prd.title}</h3>
+                          <p className="text-slate-400 text-sm leading-relaxed">{outputs.prd.summary}</p>
                         </div>
                         <div className="space-y-3">
                           <h4 className="text-sm font-bold text-slate-400 uppercase tracking-wider">Features Roadmap</h4>
                           <div className="grid md:grid-cols-2 gap-4">
-                            {selectedProject.outputs.prd.features.map((feat: any, idx: number) => (
+                            {outputs.prd.features?.map((feat: any, idx: number) => (
                               <div key={idx} className="glass rounded-xl p-4 space-y-2">
                                 <h5 className="font-semibold text-purple-300">{feat.name}</h5>
                                 <p className="text-xs text-slate-400 leading-relaxed">{feat.description}</p>
@@ -390,13 +582,13 @@ export const Dashboard: React.FC = () => {
                       </div>
                     )}
 
-                    {activeTab === 'personas' && (
+                    {activeTab === 'personas' && outputs?.personas && (
                       <div className="grid md:grid-cols-2 gap-6 max-w-4xl">
-                        {selectedProject.outputs.personas.map((pers: any, idx: number) => (
+                        {outputs.personas.map((pers: any, idx: number) => (
                           <div key={idx} className="glass rounded-xl p-6 space-y-4">
                             <div className="flex items-center gap-3">
                               <div className="h-10 w-10 rounded-full bg-purple-600/10 border border-purple-500/20 flex items-center justify-center text-purple-400 font-bold">
-                                {pers.name[0]}
+                                {pers.name ? pers.name[0] : 'U'}
                               </div>
                               <div>
                                 <h4 className="font-bold text-white">{pers.name}</h4>
@@ -412,7 +604,7 @@ export const Dashboard: React.FC = () => {
                       </div>
                     )}
 
-                    {activeTab === 'stories' && (
+                    {activeTab === 'stories' && outputs?.userStories && (
                       <div className="glass rounded-xl overflow-hidden max-w-4xl">
                         <table className="w-full border-collapse text-left text-sm text-slate-400">
                           <thead className="bg-slate-900/50 text-xs font-semibold text-white uppercase border-b border-slate-900">
@@ -423,7 +615,7 @@ export const Dashboard: React.FC = () => {
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-slate-900">
-                            {selectedProject.outputs.userStories.map((story: any) => (
+                            {outputs.userStories.map((story: any) => (
                               <tr key={story.id} className="hover:bg-slate-900/20">
                                 <td className="px-6 py-4 font-mono text-purple-400 font-semibold">{story.id}</td>
                                 <td className="px-6 py-4 font-semibold text-white">{story.title}</td>
@@ -435,15 +627,15 @@ export const Dashboard: React.FC = () => {
                       </div>
                     )}
 
-                    {activeTab === 'prioritization' && (
+                    {activeTab === 'prioritization' && outputs?.prioritization && (
                       <div className="grid md:grid-cols-3 gap-6 max-w-4xl">
                         <div className="glass rounded-xl p-5 border-t-2 border-t-red-500/50">
                           <h4 className="font-bold text-white mb-4 text-sm flex items-center gap-2">
                             <span className="h-2 w-2 rounded-full bg-red-500"></span> Must Have
                           </h4>
                           <div className="space-y-2">
-                            {selectedProject.outputs.prioritization.mustHave.length > 0 ? (
-                              selectedProject.outputs.prioritization.mustHave.map((id: string) => (
+                            {outputs.prioritization.mustHave && outputs.prioritization.mustHave.length > 0 ? (
+                              outputs.prioritization.mustHave.map((id: string) => (
                                 <div key={id} className="bg-slate-900/30 rounded-lg p-2.5 text-xs text-slate-300 font-mono border border-slate-900">
                                   {id}
                                 </div>
@@ -459,8 +651,8 @@ export const Dashboard: React.FC = () => {
                             <span className="h-2 w-2 rounded-full bg-yellow-500"></span> Should Have
                           </h4>
                           <div className="space-y-2">
-                            {selectedProject.outputs.prioritization.shouldHave.length > 0 ? (
-                              selectedProject.outputs.prioritization.shouldHave.map((id: string) => (
+                            {outputs.prioritization.shouldHave && outputs.prioritization.shouldHave.length > 0 ? (
+                              outputs.prioritization.shouldHave.map((id: string) => (
                                 <div key={id} className="bg-slate-900/30 rounded-lg p-2.5 text-xs text-slate-300 font-mono border border-slate-900">
                                   {id}
                                 </div>
@@ -476,8 +668,8 @@ export const Dashboard: React.FC = () => {
                             <span className="h-2 w-2 rounded-full bg-emerald-500"></span> Could Have
                           </h4>
                           <div className="space-y-2">
-                            {selectedProject.outputs.prioritization.couldHave.length > 0 ? (
-                              selectedProject.outputs.prioritization.couldHave.map((id: string) => (
+                            {outputs.prioritization.couldHave && outputs.prioritization.couldHave.length > 0 ? (
+                              outputs.prioritization.couldHave.map((id: string) => (
                                 <div key={id} className="bg-slate-900/30 rounded-lg p-2.5 text-xs text-slate-300 font-mono border border-slate-900">
                                   {id}
                                 </div>
