@@ -27,9 +27,6 @@ async def setup_test_db():
     async with test_engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     yield
-    # Drop tables
-    async with test_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
 
 @pytest.fixture
 async def db() -> AsyncGenerator[AsyncSession, None]:
