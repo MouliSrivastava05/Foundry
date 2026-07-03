@@ -1,5 +1,7 @@
+# pyrefly: ignore [missing-import]
 import pytest
 from unittest.mock import MagicMock, patch
+# pyrefly: ignore [missing-import]
 from sqlalchemy.future import select
 
 from app.models import Project, AgentOutput, User
@@ -190,3 +192,4 @@ async def test_celery_task_wrapper(mock_llm_getter, db, monkeypatch):
             
     await db.refresh(err_project)
     assert err_project.status == "failed"
+
