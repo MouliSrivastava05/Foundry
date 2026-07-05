@@ -9,7 +9,9 @@ from app.services.graph import ai_graph
 from app.services.tasks import run_ai_pipeline_async
 from app.services.schemas import (
     PRDModel, FeatureModel, PersonaListModel, PersonaModel,
-    UserStoryListModel, UserStoryModel, PrioritizationModel
+    UserStoryListModel, UserStoryModel, PrioritizationModel,
+    ResearchModel, CompetitorModel, ArchitectModel, TableDesignModel,
+    RouteDesignModel, RoadmapModel, CostModel, CostTierModel, ScaffoldingModel
 )
 
 # ── Mocking LLM Output Classes ──────────────────────────────────────────────
@@ -19,7 +21,15 @@ class MockStructuredLLM:
         self.response_model = response_model
 
     def invoke(self, messages, **kwargs):
-        if self.response_model == PRDModel:
+        if self.response_model == ResearchModel:
+            return ResearchModel(
+                competitors=[
+                    CompetitorModel(name="Mock Competitor", url="https://mock.com", summary="A mock competitor")
+                ],
+                market_overview="Mock market trends overview.",
+                opportunities="Gaps and mock opportunities."
+            )
+        elif self.response_model == PRDModel:
             return PRDModel(
                 title="Mock Project PRD",
                 summary="This is a mock startup summary.",
@@ -48,6 +58,35 @@ class MockStructuredLLM:
                 must_have=["US-001"],
                 should_have=["US-002"],
                 could_have=["US-003"]
+            )
+        elif self.response_model == ArchitectModel:
+            return ArchitectModel(
+                tables=[
+                    TableDesignModel(name="users", columns=["id SERIAL", "email VARCHAR"])
+                ],
+                api_endpoints=[
+                    RouteDesignModel(path="/api/v1/users", method="GET", description="Get users")
+                ]
+            )
+        elif self.response_model == RoadmapModel:
+            return RoadmapModel(
+                sprint_1=["US-001"],
+                sprint_2=["US-002"],
+                sprint_3=["US-003"],
+                sprint_4=[]
+            )
+        elif self.response_model == CostModel:
+            tier = CostTierModel(scale_100="$0", scale_1k="$10", scale_10k="$100")
+            return CostModel(
+                compute_cost=tier,
+                database_cost=tier,
+                cdn_cost=tier,
+                total_monthly=tier
+            )
+        elif self.response_model == ScaffoldingModel:
+            return ScaffoldingModel(
+                file_tree="src/\n  components/\n",
+                instructions="Run npm install"
             )
         raise ValueError(f"Unknown response model: {self.response_model}")
 
@@ -99,10 +138,15 @@ async def test_langgraph_workflow_nodes(mock_llm_getter, db, monkeypatch):
         "project_id": project.id,
         "idea": project.idea,
         "industry": project.industry,
+        "research": None,
         "prd": None,
         "personas": None,
         "user_stories": None,
         "prioritization": None,
+        "architecture": None,
+        "roadmap": None,
+        "cost_estimate": None,
+        "scaffolding": None,
         "tokens_used": 0,
         "duration_ms": 0,
         "version": 1
@@ -116,6 +160,10 @@ async def test_langgraph_workflow_nodes(mock_llm_getter, db, monkeypatch):
     assert final_state["personas"][0]["name"] == "Mock Persona 1"
     assert len(final_state["user_stories"]) == 3
     assert final_state["prioritization"]["must_have"] == ["US-001"]
+    assert final_state["architecture"]["tables"][0]["name"] == "users"
+    assert final_state["roadmap"]["sprint_1"] == ["US-001"]
+    assert final_state["cost_estimate"]["total_monthly"]["scale_100"] == "$0"
+    assert "src/" in final_state["scaffolding"]["file_tree"]
 
     # 5. Verify database persists outputs for each node
     res = await db.execute(
@@ -123,12 +171,17 @@ async def test_langgraph_workflow_nodes(mock_llm_getter, db, monkeypatch):
     )
     outputs = res.scalars().all()
     
-    assert len(outputs) == 4
+    assert len(outputs) == 9
     agent_names = [out.agent_name for out in outputs]
+    assert "Research_Agent" in agent_names
     assert "PRD_Agent" in agent_names
     assert "Persona_Agent" in agent_names
     assert "Story_Agent" in agent_names
     assert "Prioritization_Agent" in agent_names
+    assert "Architect_Agent" in agent_names
+    assert "Roadmap_Agent" in agent_names
+    assert "Cost_Agent" in agent_names
+    assert "Scaffolding_Agent" in agent_names
 
 
 @pytest.mark.anyio
@@ -192,4 +245,3 @@ async def test_celery_task_wrapper(mock_llm_getter, db, monkeypatch):
             
     await db.refresh(err_project)
     assert err_project.status == "failed"
-

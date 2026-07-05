@@ -38,3 +38,57 @@ class PrioritizationModel(BaseModel):
     must_have: list[str] = Field(..., description="List of story IDs that are absolutely critical for the MVP")
     should_have: list[str] = Field(..., description="List of story IDs that are important but not launch-critical")
     could_have: list[str] = Field(..., description="List of story IDs that represent nice-to-have features for future scopes")
+
+# ── Research Schemas ──────────────────────────────────────────
+
+class CompetitorModel(BaseModel):
+    name: str = Field(..., description="Name of the competitor startup or product")
+    url: str = Field(..., description="Web URL of the competitor, e.g. https://competitor.com")
+    summary: str = Field(..., description="Brief summary of their value proposition, strengths, or weaknesses")
+
+class ResearchModel(BaseModel):
+    competitors: list[CompetitorModel] = Field(..., description="List of direct and indirect competitors identified")
+    market_overview: str = Field(..., description="High-level description of market trends, size, and landscape")
+    opportunities: str = Field(..., description="Market gaps, opportunities, or differentiators identified")
+
+# ── Architecture Schemas ──────────────────────────────────────
+
+class TableDesignModel(BaseModel):
+    name: str = Field(..., description="Name of the database table, e.g. users, products")
+    columns: list[str] = Field(..., description="List of key columns, data types, and constraints, e.g. id (SERIAL, PK)")
+
+class RouteDesignModel(BaseModel):
+    path: str = Field(..., description="REST API endpoint route path, e.g. /api/v1/auth/login")
+    method: str = Field(..., description="HTTP Method, e.g. GET, POST, PUT, DELETE")
+    description: str = Field(..., description="Brief description of what the endpoint does")
+
+class ArchitectModel(BaseModel):
+    tables: list[TableDesignModel] = Field(..., description="List of recommended database tables")
+    api_endpoints: list[RouteDesignModel] = Field(..., description="List of core REST API endpoints")
+
+# ── Roadmap Schemas ───────────────────────────────────────────
+
+class RoadmapModel(BaseModel):
+    sprint_1: list[str] = Field(..., description="Story IDs allocated to Sprint 1 (Foundation & Setup)")
+    sprint_2: list[str] = Field(..., description="Story IDs allocated to Sprint 2 (Core MVP Features)")
+    sprint_3: list[str] = Field(..., description="Story IDs allocated to Sprint 3 (Advanced Features & Integrations)")
+    sprint_4: list[str] = Field(..., description="Story IDs allocated to Sprint 4 (Hardening, Testing & Launch Prep)")
+
+# ── Cost Estimation Schemas ───────────────────────────────────
+
+class CostTierModel(BaseModel):
+    scale_100: str = Field(..., description="Estimated cost details for 100 users")
+    scale_1k: str = Field(..., description="Estimated cost details for 1,000 users")
+    scale_10k: str = Field(..., description="Estimated cost details for 10,000 users")
+
+class CostModel(BaseModel):
+    compute_cost: CostTierModel = Field(..., description="Estimate for hosting/compute costs")
+    database_cost: CostTierModel = Field(..., description="Estimate for database/storage costs")
+    cdn_cost: CostTierModel = Field(..., description="Estimate for content delivery network and bandwidth")
+    total_monthly: CostTierModel = Field(..., description="Estimated sum of total monthly cloud costs")
+
+# ── Scaffolding Schemas ───────────────────────────────────────
+
+class ScaffoldingModel(BaseModel):
+    file_tree: str = Field(..., description="Ascii/text based directory tree showing folder and file structure layout")
+    instructions: str = Field(..., description="Quick start developer instructions to set up the scaffolding")

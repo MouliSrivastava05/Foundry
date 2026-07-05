@@ -16,7 +16,12 @@ import {
   Sparkles,
   Info,
   CheckCircle2,
-  FileDown
+  FileDown,
+  Search,
+  Code,
+  Milestone,
+  Coins,
+  FolderOpen
 } from 'lucide-react'
 
 
@@ -37,7 +42,7 @@ export const Dashboard: React.FC = () => {
   const [pipelineStep, setPipelineStep] = useState<number>(-1) // -1: not started, 0-4: steps, 5: complete
   const [pipelineProgress, setPipelineProgress] = useState(0)
   const [pipelineLogs, setPipelineLogs] = useState<string[]>([])
-  const [activeTab, setActiveTab] = useState<'prd' | 'personas' | 'stories' | 'prioritization'>('prd')
+  const [activeTab, setActiveTab] = useState<'research' | 'prd' | 'personas' | 'stories' | 'prioritization' | 'architecture' | 'roadmap' | 'cost' | 'scaffolding'>('research')
 
   // Load projects
   const fetchProjects = async () => {
@@ -62,10 +67,15 @@ export const Dashboard: React.FC = () => {
   // Format DB outputs into expected frontend structure
   const processOutputs = (dbOutputs: any[]) => {
     const formatted: any = {
+      research: null,
       prd: null,
       personas: [],
       userStories: [],
-      prioritization: { mustHave: [], shouldHave: [], couldHave: [] }
+      prioritization: { mustHave: [], shouldHave: [], couldHave: [] },
+      architecture: null,
+      roadmap: null,
+      costEstimate: null,
+      scaffolding: null
     }
     
     if (!dbOutputs || dbOutputs.length === 0) return formatted
@@ -75,7 +85,9 @@ export const Dashboard: React.FC = () => {
     
     for (const output of latestOutputs) {
       const parsed = output.parsed_output
-      if (output.agent_name === 'PRD_Agent') {
+      if (output.agent_name === 'Research_Agent') {
+        formatted.research = parsed
+      } else if (output.agent_name === 'PRD_Agent') {
         formatted.prd = parsed
       } else if (output.agent_name === 'Persona_Agent') {
         formatted.personas = parsed.personas || []
@@ -87,6 +99,14 @@ export const Dashboard: React.FC = () => {
           shouldHave: parsed.should_have || parsed.shouldHave || [],
           couldHave: parsed.could_have || parsed.couldHave || []
         }
+      } else if (output.agent_name === 'Architect_Agent') {
+        formatted.architecture = parsed
+      } else if (output.agent_name === 'Roadmap_Agent') {
+        formatted.roadmap = parsed
+      } else if (output.agent_name === 'Cost_Agent') {
+        formatted.costEstimate = parsed
+      } else if (output.agent_name === 'Scaffolding_Agent') {
+        formatted.scaffolding = parsed
       }
     }
     return formatted
@@ -101,9 +121,11 @@ export const Dashboard: React.FC = () => {
       setPipelineStep(-1)
       setPipelineProgress(0)
       setPipelineLogs([])
+      setActiveTab('prd')
       return
     }
 
+    setActiveTab('research')
     // Live mode project selection logic
     if (project.status === 'completed') {
       setPipelineStep(5)
@@ -224,7 +246,7 @@ export const Dashboard: React.FC = () => {
   // Polling hook for live mode
   useEffect(() => {
     if (isDemo || !selectedProject || selectedProject.id < 0) return
-    if (selectedProject.status !== 'processing' && pipelineStep !== 0 && pipelineStep !== 1 && pipelineStep !== 2 && pipelineStep !== 3) return
+    if (selectedProject.status !== 'processing' && pipelineStep < 0) return
 
     let intervalId: any = null
 
@@ -239,44 +261,77 @@ export const Dashboard: React.FC = () => {
 
         const logs = ['[SYS] Initializing multi-agent orchestrator DAG...', '[SYS] Loading grounding schemas...']
         let step = 0
-        let progress = 15
+        let progress = 10
+
+        if (formatted.research) {
+          logs.push('🔍 [Market Scoper] Competitor research scraped and compiled successfully.')
+          step = 1
+          progress = 25
+        } else {
+          logs.push('🔍 [Market Scoper] Scraping competitor trends and opportunity gaps...')
+        }
 
         if (formatted.prd) {
           logs.push('📝 [PRD Architect] PRD Specs generated successfully.')
-          step = 1
-          progress = 45
-        } else {
-          logs.push('🔍 [Market Scoper] Scraping trends and competitor indices...')
-          logs.push('📝 [PRD Architect] Scoping requirements and core feature list...')
+          step = 2
+          progress = 40
+        } else if (formatted.research) {
+          logs.push('📝 [PRD Architect] Scoping technical specification documents and core features...')
         }
 
         if (formatted.personas && formatted.personas.length > 0) {
-          logs.push('👥 [Persona Agent] User personas generated successfully.')
-          step = 2
-          progress = 65
+          logs.push('👥 [Persona Agent] User personas simulated successfully.')
+          step = 3
+          progress = 55
         } else if (formatted.prd) {
           logs.push('👥 [Persona Agent] Simulating customer behavior archetypes and goals...')
         }
 
         if (formatted.userStories && formatted.userStories.length > 0) {
           logs.push('🎯 [Story Writer] Agile user stories generated successfully.')
-          step = 3
-          progress = 85
+          step = 4
+          progress = 70
         } else if (formatted.personas && formatted.personas.length > 0) {
           logs.push('🎯 [Story Writer] Writing epic user stories and validation acceptance criteria...')
         }
 
         if (formatted.prioritization && formatted.prioritization.mustHave.length > 0) {
-          logs.push('⚡ [Prioritization Agent] Priority scores and sprint milestones calculated.')
-          step = 4
-          progress = 95
+          logs.push('⚡ [Prioritization Agent] Sprint priorities and MoSCoW score matrices resolved.')
+          step = 5
+          progress = 80
         } else if (formatted.userStories && formatted.userStories.length > 0) {
           logs.push('⚡ [Prioritization Agent] Calculating priority scores and sprint milestones...')
         }
 
+        if (formatted.architecture) {
+          logs.push('💻 [System Architect] Database designs and API endpoint routes structured.')
+          step = 6
+          progress = 90
+        } else if (formatted.prioritization && formatted.prioritization.mustHave.length > 0) {
+          logs.push('💻 [System Architect] Modeling DB schemas and REST endpoint routes...')
+        }
+
+        if (formatted.roadmap) {
+          logs.push('📅 [Sprint planner] Sequences and dependencies mapped to 4-sprint roadmap.')
+          step = 7
+          progress = 95
+        } else if (formatted.architecture) {
+          logs.push('📅 [Sprint planner] Generating product release roadmap and task distributions...')
+        }
+
+        if (formatted.costEstimate && formatted.scaffolding) {
+          logs.push('🪙 [FinOps Estimator] Scaling costs calculated for 100, 1k, and 10k users.')
+          logs.push('📂 [Code Scaffolder] Ascii repository file trees and setup scripts drafted.')
+          step = 8
+          progress = 98
+        } else if (formatted.roadmap) {
+          logs.push('🪙 [FinOps Estimator] Running compute, database, and CDN pricing simulations...')
+          logs.push('📂 [Code Scaffolder] Compiling directory structure layouts and instructions...')
+        }
+
         if (currentProject.status === 'completed') {
           logs.push('✅ [SYS] Scaffolding pipeline executed successfully. Blueprint cached.')
-          step = 5
+          step = 9
           progress = 100
           clearInterval(intervalId)
           setProjects(prev => prev.map(p => p.id === currentProject.id ? currentProject : p))
@@ -489,9 +544,9 @@ export const Dashboard: React.FC = () => {
                     ))}
                   </div>
                 </div>
-              ) : pipelineStep === 5 ? (
+              ) : pipelineStep === (isDemo ? 5 : 9) ? (
                 /* WORKFLOW RESULTS DISPLAY */
-                <div className="space-y-6">
+                <div className="space-y-6 animate-fadeIn">
                   {/* Info panel */}
                   <div className="rounded-xl border border-purple-500/10 bg-purple-500/5 p-4 flex items-start gap-3">
                     <Info className="h-5 w-5 text-purple-400 shrink-0 mt-0.5" />
@@ -508,8 +563,21 @@ export const Dashboard: React.FC = () => {
                   </div>
 
                   {/* Tab Navigation */}
-                  <div className="border-b border-slate-900 flex justify-between items-center">
-                    <div className="flex gap-2">
+                  <div className="border-b border-slate-900 flex flex-wrap justify-between items-center gap-3">
+                    <div className="flex flex-wrap gap-1">
+                      {!isDemo && (
+                        <button
+                          onClick={() => setActiveTab('research')}
+                          className={`pb-3 px-2 text-sm font-semibold border-b-2 transition flex items-center gap-2 ${
+                            activeTab === 'research' 
+                              ? 'border-purple-500 text-purple-400' 
+                              : 'border-transparent text-slate-500 hover:text-slate-300'
+                          }`}
+                        >
+                          <Search className="h-4 w-4" /> Competitors
+                        </button>
+                      )}
+                      
                       <button
                         onClick={() => setActiveTab('prd')}
                         className={`pb-3 px-2 text-sm font-semibold border-b-2 transition flex items-center gap-2 ${
@@ -520,6 +588,7 @@ export const Dashboard: React.FC = () => {
                       >
                         <FileText className="h-4 w-4" /> PRD Spec
                       </button>
+
                       <button
                         onClick={() => setActiveTab('personas')}
                         className={`pb-3 px-2 text-sm font-semibold border-b-2 transition flex items-center gap-2 ${
@@ -530,6 +599,7 @@ export const Dashboard: React.FC = () => {
                       >
                         <Users className="h-4 w-4" /> User Personas
                       </button>
+
                       <button
                         onClick={() => setActiveTab('stories')}
                         className={`pb-3 px-2 text-sm font-semibold border-b-2 transition flex items-center gap-2 ${
@@ -540,6 +610,7 @@ export const Dashboard: React.FC = () => {
                       >
                         <ListTodo className="h-4 w-4" /> User Stories
                       </button>
+
                       <button
                         onClick={() => setActiveTab('prioritization')}
                         className={`pb-3 px-2 text-sm font-semibold border-b-2 transition flex items-center gap-2 ${
@@ -550,6 +621,54 @@ export const Dashboard: React.FC = () => {
                       >
                         <CheckCircle2 className="h-4 w-4" /> Prioritization
                       </button>
+
+                      {!isDemo && (
+                        <>
+                          <button
+                            onClick={() => setActiveTab('architecture')}
+                            className={`pb-3 px-2 text-sm font-semibold border-b-2 transition flex items-center gap-2 ${
+                              activeTab === 'architecture' 
+                                ? 'border-purple-500 text-purple-400' 
+                                : 'border-transparent text-slate-500 hover:text-slate-300'
+                            }`}
+                          >
+                            <Code className="h-4 w-4" /> Architecture
+                          </button>
+                          
+                          <button
+                            onClick={() => setActiveTab('roadmap')}
+                            className={`pb-3 px-2 text-sm font-semibold border-b-2 transition flex items-center gap-2 ${
+                              activeTab === 'roadmap' 
+                                ? 'border-purple-500 text-purple-400' 
+                                : 'border-transparent text-slate-500 hover:text-slate-300'
+                            }`}
+                          >
+                            <Milestone className="h-4 w-4" /> Roadmap
+                          </button>
+
+                          <button
+                            onClick={() => setActiveTab('cost')}
+                            className={`pb-3 px-2 text-sm font-semibold border-b-2 transition flex items-center gap-2 ${
+                              activeTab === 'cost' 
+                                ? 'border-purple-500 text-purple-400' 
+                                : 'border-transparent text-slate-500 hover:text-slate-300'
+                            }`}
+                          >
+                            <Coins className="h-4 w-4" /> Scaling Costs
+                          </button>
+
+                          <button
+                            onClick={() => setActiveTab('scaffolding')}
+                            className={`pb-3 px-2 text-sm font-semibold border-b-2 transition flex items-center gap-2 ${
+                              activeTab === 'scaffolding' 
+                                ? 'border-purple-500 text-purple-400' 
+                                : 'border-transparent text-slate-500 hover:text-slate-300'
+                            }`}
+                          >
+                            <FolderOpen className="h-4 w-4" /> Scaffolding
+                          </button>
+                        </>
+                      )}
                     </div>
 
                     <button 
@@ -562,6 +681,44 @@ export const Dashboard: React.FC = () => {
 
                   {/* Tab Panels */}
                   <div className="py-4">
+                    {activeTab === 'research' && outputs?.research && (
+                      <div className="space-y-6 max-w-4xl animate-fadeIn">
+                        <div className="space-y-2">
+                          <h3 className="text-lg font-bold text-white">Competitor & Market Landscape</h3>
+                          <p className="text-slate-400 text-xs leading-relaxed">{outputs.research.market_overview}</p>
+                        </div>
+                        
+                        <div className="space-y-3">
+                          <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Identified Competitors</h4>
+                          <div className="grid md:grid-cols-2 gap-4">
+                            {outputs.research.competitors?.map((comp: any, idx: number) => (
+                              <div key={idx} className="glass rounded-xl p-4 border border-slate-900 space-y-2">
+                                <div className="flex justify-between items-center">
+                                  <h5 className="font-semibold text-purple-300">{comp.name}</h5>
+                                  <a 
+                                    href={comp.url} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    className="text-[10px] text-purple-400 hover:text-purple-300 underline font-mono"
+                                  >
+                                    Visit Website ↗
+                                  </a>
+                                </div>
+                                <p className="text-xs text-slate-400 leading-relaxed">{comp.summary}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Gaps & Opportunities</h4>
+                          <div className="rounded-xl border border-purple-500/10 bg-purple-500/5 p-4 text-xs text-purple-300 leading-relaxed">
+                            {outputs.research.opportunities}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
                     {activeTab === 'prd' && outputs?.prd && (
                       <div className="space-y-6 max-w-4xl">
                         <div className="space-y-2">
@@ -677,6 +834,145 @@ export const Dashboard: React.FC = () => {
                             ) : (
                               <p className="text-xs text-slate-600 italic">None</p>
                             )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {activeTab === 'architecture' && outputs?.architecture && (
+                      <div className="space-y-6 max-w-4xl animate-fadeIn">
+                        <div className="space-y-3">
+                          <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Database Schema Design</h4>
+                          <div className="grid md:grid-cols-3 gap-4">
+                            {outputs.architecture.tables?.map((table: any, idx: number) => (
+                              <div key={idx} className="glass rounded-xl p-4 border border-slate-900 space-y-3">
+                                <h5 className="font-mono text-xs font-bold text-purple-300 border-b border-slate-900 pb-2">📋 {table.name}</h5>
+                                <ul className="space-y-1.5 font-mono text-[10px] text-slate-400">
+                                  {table.columns?.map((col: string, cIdx: number) => (
+                                    <li key={cIdx} className="truncate">▪ {col}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="space-y-3">
+                          <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">REST API Routes</h4>
+                          <div className="glass rounded-xl overflow-hidden">
+                            <table className="w-full border-collapse text-left text-xs text-slate-400">
+                              <thead className="bg-slate-900/50 text-[10px] font-semibold text-white uppercase border-b border-slate-900">
+                                <tr>
+                                  <th className="px-4 py-2.5">Method</th>
+                                  <th className="px-4 py-2.5">Endpoint Path</th>
+                                  <th className="px-4 py-2.5">Route Description</th>
+                                </tr>
+                              </thead>
+                              <tbody className="divide-y divide-slate-900 font-mono text-[11px]">
+                                {outputs.architecture.api_endpoints?.map((api: any, idx: number) => (
+                                  <tr key={idx} className="hover:bg-slate-900/20">
+                                    <td className="px-4 py-3">
+                                      <span className={`px-2 py-0.5 rounded font-bold text-[9px] ${
+                                        api.method === 'GET' ? 'bg-blue-500/10 text-blue-400' :
+                                        api.method === 'POST' ? 'bg-emerald-500/10 text-emerald-400' :
+                                        api.method === 'PUT' ? 'bg-yellow-500/10 text-yellow-400' : 'bg-red-500/10 text-red-400'
+                                      }`}>{api.method}</span>
+                                    </td>
+                                    <td className="px-4 py-3 text-slate-300">{api.path}</td>
+                                    <td className="px-4 py-3 text-slate-400 font-sans text-xs">{api.description}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {activeTab === 'roadmap' && outputs?.roadmap && (
+                      <div className="grid md:grid-cols-4 gap-4 max-w-4xl animate-fadeIn">
+                        {[
+                          { name: 'Sprint 1', key: 'sprint_1', theme: 'border-t-blue-500/50', label: 'Foundation & DB' },
+                          { name: 'Sprint 2', key: 'sprint_2', theme: 'border-t-purple-500/50', label: 'Core Features' },
+                          { name: 'Sprint 3', key: 'sprint_3', theme: 'border-t-pink-500/50', label: 'Advanced Tools' },
+                          { name: 'Sprint 4', key: 'sprint_4', theme: 'border-t-emerald-500/50', label: 'Testing & Launch' }
+                        ].map((sprint, idx) => (
+                          <div key={idx} className={`glass rounded-xl p-4 border-t-2 ${sprint.theme} space-y-3`}>
+                            <div>
+                              <h5 className="font-bold text-white text-xs">{sprint.name}</h5>
+                              <span className="text-[9px] text-slate-500 font-medium uppercase tracking-wider">{sprint.label}</span>
+                            </div>
+                            <div className="space-y-2">
+                              {outputs.roadmap[sprint.key]?.map((storyId: string) => {
+                                const matchingStory = outputs.userStories?.find((s: any) => s.id === storyId);
+                                return (
+                                  <div key={storyId} className="bg-slate-900/30 rounded-lg p-2 border border-slate-900/60 space-y-1">
+                                    <div className="flex justify-between items-center">
+                                      <span className="text-[9px] font-mono font-bold text-purple-400">{storyId}</span>
+                                    </div>
+                                    {matchingStory && (
+                                      <p className="text-[10px] text-slate-400 leading-normal line-clamp-2">{matchingStory.title}</p>
+                                    )}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {activeTab === 'cost' && outputs?.costEstimate && (
+                      <div className="space-y-6 max-w-4xl animate-fadeIn">
+                        <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Infrastructure Scaling Projections</h4>
+                        <div className="grid md:grid-cols-3 gap-6">
+                          {[
+                            { users: '100 Active Users', key: 'scale_100', color: 'text-blue-400' },
+                            { users: '1,000 Active Users', key: 'scale_1k', color: 'text-purple-400' },
+                            { users: '10,000 Active Users', key: 'scale_10k', color: 'text-pink-400' }
+                          ].map((tier, idx) => (
+                            <div key={idx} className="glass rounded-xl p-5 border border-slate-900 flex flex-col justify-between space-y-4">
+                              <div className="space-y-1">
+                                <h5 className={`font-bold text-sm ${tier.color}`}>{tier.users}</h5>
+                                <p className="text-[9px] text-slate-500 uppercase tracking-wider">Estimated Monthly Budget</p>
+                              </div>
+                              <div className="space-y-3 divide-y divide-slate-900 text-xs">
+                                <div className="flex justify-between py-1">
+                                  <span className="text-slate-400">Compute / Hosting:</span>
+                                  <span className="font-mono text-white">{outputs.costEstimate.compute_cost[tier.key]}</span>
+                                </div>
+                                <div className="flex justify-between py-1 pt-2">
+                                  <span className="text-slate-400">Database / Storage:</span>
+                                  <span className="font-mono text-white">{outputs.costEstimate.database_cost[tier.key]}</span>
+                                </div>
+                                <div className="flex justify-between py-1 pt-2">
+                                  <span className="text-slate-400">CDN / Bandwidth:</span>
+                                  <span className="font-mono text-white">{outputs.costEstimate.cdn_cost[tier.key]}</span>
+                                </div>
+                                <div className="flex justify-between py-2 pt-3 font-semibold border-t border-purple-500/20">
+                                  <span className="text-purple-300">Total Projection:</span>
+                                  <span className="font-mono text-purple-400">{outputs.costEstimate.total_monthly[tier.key]}</span>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {activeTab === 'scaffolding' && outputs?.scaffolding && (
+                      <div className="space-y-6 max-w-4xl animate-fadeIn">
+                        <div className="space-y-3">
+                          <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Project Folder Scaffolding layout</h4>
+                          <div className="rounded-xl border border-slate-900 bg-black/60 p-5 font-mono text-[11px] text-slate-300 overflow-x-auto shadow-inner leading-relaxed whitespace-pre">
+                            {outputs.scaffolding.file_tree}
+                          </div>
+                        </div>
+
+                        <div className="space-y-3">
+                          <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Onboarding Setup Instructions</h4>
+                          <div className="glass rounded-xl p-5 text-xs text-slate-400 leading-relaxed space-y-2 whitespace-pre-wrap">
+                            {outputs.scaffolding.instructions}
                           </div>
                         </div>
                       </div>
