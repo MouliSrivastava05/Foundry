@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import { PDFDownloadLink } from '@react-pdf/renderer'
+import { BlueprintPDF } from '../components/BlueprintPDF'
 import { useAuth } from '../store/AuthContext'
 import { api } from '../services/api'
 import { demoProjects } from '../utils/demoData'
@@ -671,12 +673,27 @@ export const Dashboard: React.FC = () => {
                       )}
                     </div>
 
-                    <button 
-                      className="mb-2 text-xs bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 hover:text-white transition px-3 py-1.5 rounded-lg flex items-center gap-1.5 cursor-not-allowed"
-                      title="PDF Export (Coming in Phase 6)"
-                    >
-                      <FileDown className="h-3.5 w-3.5" /> Export Specs
-                    </button>
+                    {outputs && (
+                      <PDFDownloadLink
+                        document={
+                          <BlueprintPDF
+                            projectTitle={selectedProject?.title ?? 'Blueprint'}
+                            industry={selectedProject?.industry}
+                            idea={selectedProject?.idea ?? ''}
+                            outputs={outputs}
+                          />
+                        }
+                        fileName={`${(selectedProject?.title ?? 'blueprint').toLowerCase().replace(/\s+/g, '-')}-foundry-blueprint.pdf`}
+                        className="mb-2 text-xs bg-violet-700 hover:bg-violet-600 text-white transition px-3 py-1.5 rounded-lg flex items-center gap-1.5 font-medium"
+                      >
+                        {({ loading }) => (
+                          <>
+                            <FileDown className="h-3.5 w-3.5" />
+                            {loading ? 'Preparing PDF…' : 'Export Specs'}
+                          </>
+                        )}
+                      </PDFDownloadLink>
+                    )}
                   </div>
 
                   {/* Tab Panels */}
