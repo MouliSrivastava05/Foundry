@@ -92,3 +92,22 @@ class CostModel(BaseModel):
 class ScaffoldingModel(BaseModel):
     file_tree: str = Field(..., description="Ascii/text based directory tree showing folder and file structure layout")
     instructions: str = Field(..., description="Quick start developer instructions to set up the scaffolding")
+
+# ── UI Blueprint Schemas ──────────────────────────────────────
+
+class UIModel(BaseModel):
+    html_code: str = Field(
+        ...,
+        description=(
+            "A complete, self-contained HTML document (including inline <style> CSS) that serves "
+            "as a professional landing page for the startup. Must include a hero section with a "
+            "headline and CTA button, a features/benefits section, and a footer. Use modern CSS "
+            "with a visually impressive color palette chosen to match the startup's brand/industry. "
+            "Do NOT use external CDN links or JavaScript frameworks — pure HTML and inline CSS only."
+        )
+    )
+    style_description: str = Field(
+        ...,
+        description="A one-sentence description of the visual style chosen, e.g. 'Dark glassmorphism with violet accents targeting fintech professionals.'"
+    )
+
