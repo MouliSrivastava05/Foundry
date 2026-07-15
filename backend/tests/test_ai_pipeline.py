@@ -11,7 +11,8 @@ from app.services.schemas import (
     PRDModel, FeatureModel, PersonaListModel, PersonaModel,
     UserStoryListModel, UserStoryModel, PrioritizationModel,
     ResearchModel, CompetitorModel, ArchitectModel, TableDesignModel,
-    RouteDesignModel, RoadmapModel, CostModel, CostTierModel, ScaffoldingModel
+    RouteDesignModel, RoadmapModel, CostModel, CostTierModel, ScaffoldingModel,
+    UIModel
 )
 
 # ── Mocking LLM Output Classes ──────────────────────────────────────────────
@@ -88,6 +89,11 @@ class MockStructuredLLM:
                 file_tree="src/\n  components/\n",
                 instructions="Run npm install"
             )
+        elif self.response_model == UIModel:
+            return UIModel(
+                html_code="<!DOCTYPE html><html><head><style>body{background:#000;color:#fff;}</style></head><body><h1>Mock Landing Page</h1></body></html>",
+                style_description="Dark minimal style for mock startup."
+            )
         raise ValueError(f"Unknown response model: {self.response_model}")
 
 def mock_get_llm(*args, **kwargs):
@@ -147,6 +153,7 @@ async def test_langgraph_workflow_nodes(mock_llm_getter, db, monkeypatch):
         "roadmap": None,
         "cost_estimate": None,
         "scaffolding": None,
+        "ui": None,
         "tokens_used": 0,
         "duration_ms": 0,
         "version": 1
@@ -164,6 +171,8 @@ async def test_langgraph_workflow_nodes(mock_llm_getter, db, monkeypatch):
     assert final_state["roadmap"]["sprint_1"] == ["US-001"]
     assert final_state["cost_estimate"]["total_monthly"]["scale_100"] == "$0"
     assert "src/" in final_state["scaffolding"]["file_tree"]
+    assert "Mock Landing Page" in final_state["ui"]["html_code"]
+    assert final_state["ui"]["style_description"] != ""
 
     # 5. Verify database persists outputs for each node
     res = await db.execute(
@@ -171,7 +180,7 @@ async def test_langgraph_workflow_nodes(mock_llm_getter, db, monkeypatch):
     )
     outputs = res.scalars().all()
     
-    assert len(outputs) == 9
+    assert len(outputs) == 10
     agent_names = [out.agent_name for out in outputs]
     assert "Research_Agent" in agent_names
     assert "PRD_Agent" in agent_names
@@ -182,6 +191,7 @@ async def test_langgraph_workflow_nodes(mock_llm_getter, db, monkeypatch):
     assert "Roadmap_Agent" in agent_names
     assert "Cost_Agent" in agent_names
     assert "Scaffolding_Agent" in agent_names
+    assert "UI_Agent" in agent_names
 
 
 @pytest.mark.anyio
