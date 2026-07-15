@@ -18,7 +18,8 @@ from app.services.schemas import (
     ArchitectModel,
     RoadmapModel,
     CostModel,
-    ScaffoldingModel
+    ScaffoldingModel,
+    UIModel
 )
 
 logger = structlog.get_logger()
@@ -38,6 +39,7 @@ class GraphState(TypedDict):
     roadmap: Optional[dict[str, Any]]
     cost_estimate: Optional[dict[str, Any]]
     scaffolding: Optional[dict[str, Any]]
+    ui: Optional[dict[str, Any]]
     tokens_used: int
     duration_ms: int
     version: int
@@ -477,6 +479,63 @@ async def generate_scaffolding_node(state: GraphState) -> dict[str, Any]:
         "duration_ms": state["duration_ms"] + duration_ms
     }
 
+# ── Node 9: UI Blueprint Generator ────────────────────────────────────────────
+
+async def generate_ui_node(state: GraphState) -> dict[str, Any]:
+    logger.info("generating_ui_blueprint", project_id=state["project_id"])
+    llm = get_llm()
+    structured_llm = llm.with_structured_output(UIModel)
+
+    system_prompt = (
+        "You are an expert UI/UX Designer and Frontend Developer. "
+        "Given a startup idea, its PRD summary, and target personas, generate a complete, "
+        "self-contained HTML landing page for the startup product. "
+        "Requirements:\n"
+        "- Include a <style> block with all CSS inline — no external stylesheets or CDN links.\n"
+        "- Include a visually impressive hero section with a bold headline, subtitle, and CTA button.\n"
+        "- Include a features section (3 feature cards).\n"
+        "- Include a minimal footer with the product name.\n"
+        "- Choose a modern, premium color palette that matches the startup's industry and personality.\n"
+        "- Use CSS variables, smooth hover transitions, and a clean professional layout.\n"
+        "- Do NOT use any JavaScript or external framework references.\n"
+        "Output only the structured JSON conforming to the schema."
+    )
+
+    user_content = (
+        f"Startup Idea: {state['idea']}\n"
+        f"Industry: {state.get('industry') or 'General'}\n"
+        f"PRD Summary: {state['prd'].get('summary', '')}\n"
+        f"Core Features: {json.dumps(state['prd'].get('features', []))}\n"
+        f"Personas: {json.dumps(state['personas'])}"
+    )
+
+    messages = [
+        SystemMessage(content=system_prompt),
+        HumanMessage(content=user_content)
+    ]
+
+    start_time = time.time()
+    result: UIModel = structured_llm.invoke(messages)
+    duration_ms = int((time.time() - start_time) * 1000)
+
+    ui_dict = result.model_dump()
+    raw_response = json.dumps(ui_dict)
+
+    await save_agent_output(
+        project_id=state["project_id"],
+        agent_name="UI_Agent",
+        version=state["version"],
+        raw_response=raw_response,
+        parsed_output=ui_dict,
+        tokens_used=0,
+        duration_ms=duration_ms
+    )
+
+    return {
+        "ui": ui_dict,
+        "duration_ms": state["duration_ms"] + duration_ms
+    }
+
 # ── Graph Compilation ─────────────────────────────────────────────────────────
 
 workflow = StateGraph(GraphState)
@@ -491,6 +550,7 @@ workflow.add_node("generate_architecture", generate_architecture_node)
 workflow.add_node("generate_roadmap", generate_roadmap_node)
 workflow.add_node("generate_cost", generate_cost_node)
 workflow.add_node("generate_scaffolding", generate_scaffolding_node)
+workflow.add_node("generate_ui", generate_ui_node)
 
 # Set Entry and Edges
 workflow.set_entry_point("generate_research")
@@ -502,7 +562,8 @@ workflow.add_edge("generate_prioritization", "generate_architecture")
 workflow.add_edge("generate_architecture", "generate_roadmap")
 workflow.add_edge("generate_roadmap", "generate_cost")
 workflow.add_edge("generate_cost", "generate_scaffolding")
-workflow.add_edge("generate_scaffolding", END)
+workflow.add_edge("generate_scaffolding", "generate_ui")
+workflow.add_edge("generate_ui", END)
 
 # Compile the LangGraph
 ai_graph = workflow.compile()
