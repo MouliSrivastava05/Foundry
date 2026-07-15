@@ -23,7 +23,8 @@ import {
   Code,
   Milestone,
   Coins,
-  FolderOpen
+  FolderOpen,
+  Monitor
 } from 'lucide-react'
 
 
@@ -109,6 +110,8 @@ export const Dashboard: React.FC = () => {
         formatted.costEstimate = parsed
       } else if (output.agent_name === 'Scaffolding_Agent') {
         formatted.scaffolding = parsed
+      } else if (output.agent_name === 'UI_Agent') {
+        formatted.ui = parsed
       }
     }
     return formatted
@@ -669,6 +672,17 @@ export const Dashboard: React.FC = () => {
                           >
                             <FolderOpen className="h-4 w-4" /> Scaffolding
                           </button>
+
+                          <button
+                            onClick={() => setActiveTab('ui')}
+                            className={`pb-3 px-2 text-sm font-semibold border-b-2 transition flex items-center gap-2 ${
+                              activeTab === 'ui' 
+                                ? 'border-purple-500 text-purple-400' 
+                                : 'border-transparent text-slate-500 hover:text-slate-300'
+                            }`}
+                          >
+                            <Monitor className="h-4 w-4" /> UI Preview
+                          </button>
                         </>
                       )}
                     </div>
@@ -991,6 +1005,41 @@ export const Dashboard: React.FC = () => {
                           <div className="glass rounded-xl p-5 text-xs text-slate-400 leading-relaxed space-y-2 whitespace-pre-wrap">
                             {outputs.scaffolding.instructions}
                           </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {activeTab === 'ui' && outputs?.ui && (
+                      <div className="space-y-5 animate-fadeIn">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Generated Landing Page Preview</h4>
+                            {outputs.ui.style_description && (
+                              <p className="mt-1 text-xs text-slate-500 italic">{outputs.ui.style_description}</p>
+                            )}
+                          </div>
+                          <a
+                            href={`data:text/html;charset=utf-8,${encodeURIComponent(outputs.ui.html_code)}`}
+                            download={`${(selectedProject?.title ?? 'blueprint').toLowerCase().replace(/\s+/g, '-')}-landing-page.html`}
+                            className="text-xs bg-violet-700 hover:bg-violet-600 text-white transition px-3 py-1.5 rounded-lg flex items-center gap-1.5 font-medium"
+                          >
+                            <FileDown className="h-3.5 w-3.5" /> Download HTML
+                          </a>
+                        </div>
+                        <div className="rounded-xl overflow-hidden border border-slate-800 shadow-2xl">
+                          <div className="flex items-center gap-2 bg-slate-900 px-4 py-2 border-b border-slate-800">
+                            <div className="h-3 w-3 rounded-full bg-red-500/70" />
+                            <div className="h-3 w-3 rounded-full bg-yellow-500/70" />
+                            <div className="h-3 w-3 rounded-full bg-green-500/70" />
+                            <span className="ml-2 text-xs text-slate-500 font-mono">{selectedProject?.title?.toLowerCase().replace(/\s+/g, '-')}.app</span>
+                          </div>
+                          <iframe
+                            srcDoc={outputs.ui.html_code}
+                            title="UI Blueprint Preview"
+                            className="w-full bg-white"
+                            style={{ height: '600px', border: 'none' }}
+                            sandbox="allow-same-origin"
+                          />
                         </div>
                       </div>
                     )}
