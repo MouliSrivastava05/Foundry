@@ -48,6 +48,7 @@ async def run_ai_pipeline_async(project_id: int):
         "roadmap": None,
         "cost_estimate": None,
         "scaffolding": None,
+        "ui": None,
         "tokens_used": 0,
         "duration_ms": 0,
         "version": next_version
