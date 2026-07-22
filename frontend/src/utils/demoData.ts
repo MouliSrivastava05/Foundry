@@ -6,10 +6,16 @@ export interface DemoProject {
   version: number
   created_at: string
   outputs: {
+    research?: any
     prd: any
     personas: any
     userStories: any
     prioritization: any
+    architecture?: any
+    roadmap?: any
+    costEstimate?: any
+    scaffolding?: any
+    ui?: any
   }
 }
 
