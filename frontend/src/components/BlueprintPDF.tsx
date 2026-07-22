@@ -643,6 +643,36 @@ export const BlueprintPDF: React.FC<BlueprintPDFProps> = ({
           <Footer title={projectTitle} />
         </Page>
       )}
+
+      {/* ── Page 11: UI Blueprint ─────────────────────────── */}
+      {outputs?.ui && (
+        <Page size="A4" style={styles.page}>
+          <View style={styles.contentPage}>
+            <SectionHeader badge="10 · UI BLUEPRINT" title="Generated Landing Page" />
+
+            <Text style={styles.label}>DESIGN STYLE</Text>
+            <View style={styles.card}>
+              <Text style={styles.cardText}>{outputs.ui.style_description}</Text>
+            </View>
+
+            <Text style={[styles.label, { marginTop: 10 }]}>HTML SOURCE PREVIEW</Text>
+            <View style={styles.codeBlock}>
+              <Text style={styles.codeText}>
+                {outputs.ui.html_code
+                  ? outputs.ui.html_code.slice(0, 1200) + (outputs.ui.html_code.length > 1200 ? '\n\n…(truncated — see UI Preview tab for full page)' : '')
+                  : ''}
+              </Text>
+            </View>
+
+            <View style={[styles.card, { marginTop: 8, backgroundColor: '#7c3aed22', borderColor: '#7c3aed44' }]}>
+              <Text style={[styles.cardText, { color: '#c4b5fd' }]}>
+                💡 The full interactive landing page is available in the "UI Preview" tab of your Foundry dashboard. You can also download it as a standalone .html file from there.
+              </Text>
+            </View>
+          </View>
+          <Footer title={projectTitle} />
+        </Page>
+      )}
     </Document>
   )
 }
