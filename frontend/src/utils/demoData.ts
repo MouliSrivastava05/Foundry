@@ -174,6 +174,97 @@ export const demoProjects: DemoProject[] = [
         mustHave: ['US-101', 'US-102'],
         shouldHave: ['US-103'],
         couldHave: []
+      },
+      research: {
+        market_overview: 'Healthcare conversational AI scheduling is experiencing a 22.8% CAGR due to acute clinical staffing shortages and patient demand for instant self-service booking.',
+        competitors: [
+          { name: 'Luma Health', url: 'https://lumahealth.io', summary: 'Patient engine offering SMS appointment reminders and basic EHR scheduling.' },
+          { name: 'Phreesia Patient Intake', url: 'https://phreesia.com', summary: 'Automated check-in kiosks and scheduling system for outpatient medical groups.' }
+        ],
+        opportunities: 'HIPAA-compliant conversational AI voice agents capable of real-time insurance eligibility checks during phone calls.'
+      },
+      architecture: {
+        tables: [
+          { name: 'appointments', columns: ['id (UUID, PK)', 'clinic_id (FK)', 'patient_id (FK)', 'start_time (TIMESTAMP)', 'ehr_sync_status (VARCHAR)'] },
+          { name: 'insurance_verifications', columns: ['id (UUID, PK)', 'appointment_id (FK)', 'payer_id (VARCHAR)', 'copay_amount (DECIMAL)', 'status (VARCHAR)'] }
+        ],
+        api_endpoints: [
+          { method: 'POST', path: '/api/v1/appointments/book', description: 'Books patient appointment slot and triggers Epic/Athena EHR sync.' },
+          { method: 'POST', path: '/api/v1/insurance/verify', description: 'Executes HIPAA EDI 270/271 real-time eligibility check query.' }
+        ]
+      },
+      roadmap: {
+        sprint_1: ['US-101'],
+        sprint_2: ['US-102'],
+        sprint_3: ['US-103'],
+        sprint_4: []
+      },
+      costEstimate: {
+        compute_cost: { scale_100: '$40/mo', scale_1k: '$180/mo', scale_10k: '$950/mo' },
+        database_cost: { scale_100: '$30/mo', scale_1k: '$100/mo', scale_10k: '$450/mo' },
+        cdn_cost: { scale_100: '$10/mo', scale_1k: '$30/mo', scale_10k: '$200/mo' },
+        total_monthly: { scale_100: '$80/mo', scale_1k: '$310/mo', scale_10k: '$1,600/mo' }
+      },
+      scaffolding: {
+        file_tree: 'medisched-agent/\n├── backend/\n│   ├── app/\n│   │   ├── api/v1/ehr_sync.py\n│   │   ├── services/hipaa_verifier.py\n│   │   └── models/appointment.py\n│   └── main.py\n└── frontend/\n    └── src/\n        ├── components/BookingWidget.tsx\n        └── pages/ClinicAdmin.tsx',
+        instructions: '1. Set up HIPAA-compliant Postgres DB and environment variables\n2. Run `pip install -r requirements.txt` in /backend\n3. Launch API with `uvicorn main:app --port 8000`'
+      },
+      ui: {
+        style_description: 'Clean medical blue & teal responsive scheduling portal for modern clinics.',
+        html_code: `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediSched Agent — Intelligent Clinic Scheduling</title>
+  <style>
+    :root {
+      --bg: #0b1528;
+      --card: #13233f;
+      --accent: #38bdf8;
+      --text: #f0f9ff;
+      --muted: #7dd3fc;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 2rem; }
+    header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 2rem; border-bottom: 1px solid #1e3a60; }
+    .logo { font-size: 1.5rem; font-weight: 800; color: var(--accent); display: flex; align-items: center; gap: 0.5rem; }
+    .btn { background: var(--accent); color: #0c4a6e; padding: 0.6rem 1.2rem; font-weight: 700; border-radius: 8px; text-decoration: none; display: inline-block; }
+    .hero { text-align: center; padding: 4rem 1rem; }
+    .hero h1 { font-size: 3rem; margin-bottom: 1rem; color: var(--text); }
+    .hero p { color: #93c5fd; max-width: 600px; margin: 0 auto 2rem; font-size: 1.1rem; line-height: 1.6; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; max-width: 1000px; margin: 0 auto; }
+    .card { background: var(--card); border: 1px solid #1e3a60; padding: 1.5rem; border-radius: 12px; }
+    .card h3 { color: var(--accent); margin-bottom: 0.5rem; }
+    .card p { color: #94a3b8; font-size: 0.9rem; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">🩺 MediSched Agent</div>
+    <a href="#" class="btn">Connect Your EHR</a>
+  </header>
+  <section class="hero">
+    <h1>Autonomous 24/7 Clinic AI Receptionist</h1>
+    <p>Reduce missed appointments by 40% with automated conversational voice and text booking synchronized directly with Epic & Athenahealth.</p>
+    <a href="#" class="btn">Book Live Demo</a>
+  </section>
+  <div class="grid">
+    <div class="card">
+      <h3>🔄 Real-Time EHR Sync</h3>
+      <p>Direct two-way integration with Epic, Athenahealth, and Cerner patient schedules.</p>
+    </div>
+    <div class="card">
+      <h3>🛡️ Instant Insurance Checks</h3>
+      <p>Verifies active copays and insurance coverage eligibility before confirming bookings.</p>
+    </div>
+    <div class="card">
+      <h3>💬 WhatsApp & SMS Voice Assistant</h3>
+      <p>Patients reschedule and confirm checkups instantly using conversational AI.</p>
+    </div>
+  </div>
+</body>
+</html>`
       }
     }
   },
