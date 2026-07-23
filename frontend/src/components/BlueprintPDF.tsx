@@ -531,7 +531,7 @@ export const BlueprintPDF: React.FC<BlueprintPDFProps> = ({
             <View style={styles.grid2}>
               {outputs.architecture.tables?.map((table: any, i: number) => (
                 <View key={i} style={[styles.card, styles.gridItem]}>
-                  <Text style={styles.cardTitle}>📋 {table.name}</Text>
+                  <Text style={styles.cardTitle}>Table: {table.name}</Text>
                   {table.columns?.map((col: string, ci: number) => (
                     <Text key={ci} style={[styles.cardText, { fontFamily: 'Courier', fontSize: 8 }]}>▪ {col}</Text>
                   ))}
@@ -574,11 +574,19 @@ export const BlueprintPDF: React.FC<BlueprintPDFProps> = ({
                 <View key={sprint.key} style={[styles.sprintCard, { borderTopColor: sprint.color }]}>
                   <Text style={styles.sprintLabel}>{sprint.label}</Text>
                   <Text style={styles.sprintSubLabel}>{sprint.sub}</Text>
-                  {outputs.roadmap[sprint.key]?.map((id: string) => (
-                    <View key={id} style={styles.sprintItem}>
-                      <Text style={styles.sprintItemId}>{id}</Text>
-                    </View>
-                  ))}
+                  {outputs.roadmap[sprint.key]?.map((id: string) => {
+                    const story = outputs.userStories?.find((s: any) => s.id === id)
+                    return (
+                      <View key={id} style={[styles.sprintItem, { padding: 6, marginBottom: 6 }]}>
+                        <Text style={styles.sprintItemId}>{id}{story ? `: ${story.title}` : ''}</Text>
+                        {story?.description && (
+                          <Text style={[styles.cardText, { fontSize: 7, color: '#94a3b8', marginTop: 2, lineHeight: 1.3 }]}>
+                            {story.description}
+                          </Text>
+                        )}
+                      </View>
+                    )
+                  })}
                 </View>
               ))}
             </View>
@@ -648,25 +656,29 @@ export const BlueprintPDF: React.FC<BlueprintPDFProps> = ({
       {outputs?.ui && (
         <Page size="A4" style={styles.page}>
           <View style={styles.contentPage}>
-            <SectionHeader badge="10 · UI BLUEPRINT" title="Generated Landing Page" />
+            <SectionHeader badge="10 · UI BLUEPRINT" title="Visual UI & Product Prototype Spec" />
 
-            <Text style={styles.label}>DESIGN STYLE</Text>
+            <Text style={styles.label}>DESIGN SYSTEM & BRAND RATIONALE</Text>
             <View style={styles.card}>
               <Text style={styles.cardText}>{outputs.ui.style_description}</Text>
             </View>
 
-            <Text style={[styles.label, { marginTop: 10 }]}>HTML SOURCE PREVIEW</Text>
-            <View style={styles.codeBlock}>
-              <Text style={styles.codeText}>
-                {outputs.ui.html_code
-                  ? outputs.ui.html_code.slice(0, 1200) + (outputs.ui.html_code.length > 1200 ? '\n\n…(truncated — see UI Preview tab for full page)' : '')
-                  : ''}
-              </Text>
+            <Text style={[styles.label, { marginTop: 10 }]}>PROTOTYPE ARCHITECTURE & WIREFRAME BLOCKS</Text>
+            <View style={styles.card}>
+              <Text style={[styles.cardTitle, { color: '#a78bfa', marginBottom: 4 }]}>Hero Landing & Value Proposition</Text>
+              <Text style={[styles.cardText, { marginBottom: 8 }]}>High-impact headline, subtext summary, and primary call-to-action button to drive customer acquisition.</Text>
+
+              <Text style={[styles.cardTitle, { color: '#a78bfa', marginBottom: 4 }]}>Core Feature Cards</Text>
+              <Text style={[styles.cardText, { marginBottom: 8 }]}>Interactive grid displaying the 3 primary product capabilities with custom icons and dark mode styling.</Text>
+
+              <Text style={[styles.cardTitle, { color: '#a78bfa', marginBottom: 4 }]}>Responsive Web & Mobile Layout</Text>
+              <Text style={styles.cardText}>Pure self-contained CSS layout optimized for both desktop and mobile viewports.</Text>
             </View>
 
-            <View style={[styles.card, { marginTop: 8, backgroundColor: '#7c3aed22', borderColor: '#7c3aed44' }]}>
-              <Text style={[styles.cardText, { color: '#c4b5fd' }]}>
-                💡 The full interactive landing page is available in the "UI Preview" tab of your Foundry dashboard. You can also download it as a standalone .html file from there.
+            <View style={[styles.card, { marginTop: 10, backgroundColor: '#7c3aed22', borderColor: '#7c3aed44' }]}>
+              <Text style={[styles.cardText, { color: '#c4b5fd', lineHeight: 1.6 }]}>
+                🚀 Live Web App Demo Available:{'\n'}
+                Launch the interactive live prototype directly from your Foundry dashboard under the "UI Preview" tab, or download the full HTML/CSS package to deploy instantly.
               </Text>
             </View>
           </View>
