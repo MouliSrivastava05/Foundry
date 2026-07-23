@@ -50,6 +50,97 @@ export const demoProjects: DemoProject[] = [
         mustHave: ['US-001', 'US-002'],
         shouldHave: ['US-003'],
         couldHave: ['US-004']
+      },
+      research: {
+        market_overview: 'The global green logistics market is growing at a 14.2% CAGR driven by European Union carbon mandates and corporate ESG compliance targets.',
+        competitors: [
+          { name: 'Samsara Green Routing', url: 'https://samsara.com', summary: 'Enterprise telematics platform with basic fuel economy dashboards.' },
+          { name: 'Routific EV', url: 'https://routific.com', summary: 'Route planner for local delivery fleets with basic electric vehicle support.' }
+        ],
+        opportunities: 'Real-time grid carbon intensity matching during EV charging windows and battery state-of-health degradation modeling.'
+      },
+      architecture: {
+        tables: [
+          { name: 'vehicles', columns: ['id (UUID, PK)', 'fleet_id (FK)', 'battery_capacity_kwh (FLOAT)', 'telematics_device_id (VARCHAR)'] },
+          { name: 'routes', columns: ['id (UUID, PK)', 'vehicle_id (FK)', 'origin_geo (POINT)', 'destination_geo (POINT)', 'co2_saved_kg (FLOAT)'] }
+        ],
+        api_endpoints: [
+          { method: 'POST', path: '/api/v1/routes/optimize', description: 'Calculates carbon-optimized waypoint sequence.' },
+          { method: 'GET', path: '/api/v1/fleets/{id}/telematics', description: 'Streams real-time battery and vehicle range telemetry.' }
+        ]
+      },
+      roadmap: {
+        sprint_1: ['US-001'],
+        sprint_2: ['US-002'],
+        sprint_3: ['US-003'],
+        sprint_4: ['US-004']
+      },
+      costEstimate: {
+        compute_cost: { scale_100: '$25/mo', scale_1k: '$120/mo', scale_10k: '$850/mo' },
+        database_cost: { scale_100: '$15/mo', scale_1k: '$60/mo', scale_10k: '$300/mo' },
+        cdn_cost: { scale_100: '$5/mo', scale_1k: '$20/mo', scale_10k: '$150/mo' },
+        total_monthly: { scale_100: '$45/mo', scale_1k: '$200/mo', scale_10k: '$1,300/mo' }
+      },
+      scaffolding: {
+        file_tree: 'ecoroute-core/\n├── backend/\n│   ├── app/\n│   │   ├── api/v1/routes.py\n│   │   ├── services/telematics.py\n│   │   └── models/vehicle.py\n│   └── main.py\n└── frontend/\n    └── src/\n        ├── components/RouteMap.tsx\n        └── pages/FleetDashboard.tsx',
+        instructions: '1. Install Python 3.11+ and Node 20+\n2. Run `pip install -r requirements.txt` in /backend\n3. Launch API with `uvicorn main:app --reload`'
+      },
+      ui: {
+        style_description: 'Modern emerald green & dark glassmorphism dashboard targeting fleet managers.',
+        html_code: `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoRoute AI — Carbon-Optimized Logistics</title>
+  <style>
+    :root {
+      --bg: #09130e;
+      --card: #102219;
+      --accent: #10b981;
+      --text: #ecfdf5;
+      --muted: #6ee7b7;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 2rem; }
+    header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 2rem; border-bottom: 1px solid #1c3d2d; }
+    .logo { font-size: 1.5rem; font-weight: 800; color: var(--accent); display: flex; align-items: center; gap: 0.5rem; }
+    .btn { background: var(--accent); color: #042f1e; padding: 0.6rem 1.2rem; font-weight: 700; border-radius: 8px; text-decoration: none; display: inline-block; }
+    .hero { text-align: center; padding: 4rem 1rem; }
+    .hero h1 { font-size: 3rem; margin-bottom: 1rem; color: var(--text); }
+    .hero p { color: #a7f3d0; max-width: 600px; margin: 0 auto 2rem; font-size: 1.1rem; line-height: 1.6; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; max-width: 1000px; margin: 0 auto; }
+    .card { background: var(--card); border: 1px solid #1c3d2d; padding: 1.5rem; border-radius: 12px; }
+    .card h3 { color: var(--accent); margin-bottom: 0.5rem; }
+    .card p { color: #94a3b8; font-size: 0.9rem; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">⚡ EcoRoute AI</div>
+    <a href="#" class="btn">Request Fleet Demo</a>
+  </header>
+  <section class="hero">
+    <h1>Zero-Emission Delivery Fleet Optimization</h1>
+    <p>Cut your fleet carbon footprint by up to 35% with dynamic EV battery telematics and grid-aware routing engines.</p>
+    <a href="#" class="btn">Calculate Fleet Savings</a>
+  </section>
+  <div class="grid">
+    <div class="card">
+      <h3>🌱 Carbon-Optimized Routing</h3>
+      <p>Real-time calculation factoring in weather, payload, elevation, and traffic.</p>
+    </div>
+    <div class="card">
+      <h3>⚡ Smart Grid Charging</h3>
+      <p>Schedule charging stops when renewable energy availability in the grid peaks.</p>
+    </div>
+    <div class="card">
+      <h3>📊 ESG Telematics</h3>
+      <p>Automated greenhouse gas reporting for compliance and corporate audit readiness.</p>
+    </div>
+  </div>
+</body>
+</html>`
       }
     }
   },
