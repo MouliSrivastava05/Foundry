@@ -297,6 +297,98 @@ export const demoProjects: DemoProject[] = [
         mustHave: ['US-201', 'US-202'],
         shouldHave: ['US-203'],
         couldHave: []
+      },
+      research: {
+        market_overview: 'AI accounting and automated bookkeeping software is expanding rapidly with a 19.5% CAGR as startups move away from traditional quarterly accounting agencies toward real-time automated ledger tools.',
+        competitors: [
+          { name: 'Pilot.com', url: 'https://pilot.com', summary: 'Human-assisted bookkeeping service for startups with monthly financial reporting.' },
+          { name: 'Truewind AI', url: 'https://truewind.ai', summary: 'AI-powered accounting software designed specifically for venture-backed startups.' }
+        ],
+        opportunities: 'Instant receipt matching via multimodal LLMs with automated quarterly tax estimation integrated into founder banking feeds.'
+      },
+      architecture: {
+        tables: [
+          { name: 'transactions', columns: ['id (UUID, PK)', 'account_id (VARCHAR)', 'amount (DECIMAL)', 'category (VARCHAR)', 'plaid_transaction_id (VARCHAR)'] },
+          { name: 'receipts', columns: ['id (UUID, PK)', 'transaction_id (FK)', 'vendor_name (VARCHAR)', 'ocr_extracted_text (TEXT)', 'status (VARCHAR)'] }
+        ],
+        api_endpoints: [
+          { method: 'POST', path: '/api/v1/plaid/sync', description: 'Triggers Plaid webhooks and ingests raw transaction payloads.' },
+          { method: 'POST', path: '/api/v1/receipts/process', description: 'Processes uploaded receipt images via OCR and matches against ledger entries.' }
+        ]
+      },
+      roadmap: {
+        sprint_1: ['US-201'],
+        sprint_2: ['US-202'],
+        sprint_3: ['US-203'],
+        sprint_4: []
+      },
+      costEstimate: {
+        compute_cost: { scale_100: '$30/mo', scale_1k: '$150/mo', scale_10k: '$900/mo' },
+        database_cost: { scale_100: '$20/mo', scale_1k: '$80/mo', scale_10k: '$400/mo' },
+        cdn_cost: { scale_100: '$5/mo', scale_1k: '$25/mo', scale_10k: '$180/mo' },
+        total_monthly: { scale_100: '$55/mo', scale_1k: '$255/mo', scale_10k: '$1,480/mo' }
+      },
+      scaffolding: {
+        file_tree: 'finscale-ledger/\n├── backend/\n│   ├── app/\n│   │   ├── api/v1/plaid.py\n│   │   ├── services/ocr_matcher.py\n│   │   └── models/transaction.py\n│   └── main.py\n└── frontend/\n    └── src/\n        ├── components/LedgerTable.tsx\n        └── pages/TaxDashboard.tsx',
+        instructions: '1. Configure Plaid API keys and PostgreSQL connection string\n2. Run `pip install -r requirements.txt` in /backend\n3. Launch API with `uvicorn main:app --reload`'
+      },
+      ui: {
+        style_description: 'Sleek dark violet & gold luxury fintech dashboard for venture-backed founders.',
+        html_code: `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FinScale Bookkeeper — Autonomous Startup Ledger</title>
+  <style>
+    :root {
+      --bg: #0f0a1c;
+      --card: #19122e;
+      --accent: #c084fc;
+      --gold: #fbbf24;
+      --text: #faf5ff;
+      --muted: #e9d5ff;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 2rem; }
+    header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 2rem; border-bottom: 1px solid #2e1d52; }
+    .logo { font-size: 1.5rem; font-weight: 800; color: var(--accent); display: flex; align-items: center; gap: 0.5rem; }
+    .btn { background: var(--accent); color: #2e1065; padding: 0.6rem 1.2rem; font-weight: 700; border-radius: 8px; text-decoration: none; display: inline-block; }
+    .hero { text-align: center; padding: 4rem 1rem; }
+    .hero h1 { font-size: 3rem; margin-bottom: 1rem; color: var(--text); }
+    .hero p { color: var(--muted); max-width: 600px; margin: 0 auto 2rem; font-size: 1.1rem; line-height: 1.6; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; max-width: 1000px; margin: 0 auto; }
+    .card { background: var(--card); border: 1px solid #2e1d52; padding: 1.5rem; border-radius: 12px; }
+    .card h3 { color: var(--gold); margin-bottom: 0.5rem; }
+    .card p { color: #94a3b8; font-size: 0.9rem; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">💎 FinScale Bookkeeper</div>
+    <a href="#" class="btn">Connect Bank Feed</a>
+  </header>
+  <section class="hero">
+    <h1>Autonomous AI Ledger & Real-Time Tax Forecasts</h1>
+    <p>Reconcile receipts, match banking charges automatically with Plaid, and project quarterly tax liability without opening spreadsheets.</p>
+    <a href="#" class="btn">Start Free Trial</a>
+  </section>
+  <div class="grid">
+    <div class="card">
+      <h3>🏦 Instant Bank Reconciliation</h3>
+      <p>Automated multi-account ingestion via Plaid API integration.</p>
+    </div>
+    <div class="card">
+      <h3>🧾 AI Receipt Matching</h3>
+      <p>Multimodal vision LLM extracts vendor, tax, and totals from emailed receipts.</p>
+    </div>
+    <div class="card">
+      <h3>📈 Tax Forecast Engine</h3>
+      <p>Real-time rolling calculation of estimated federal and state tax liabilities.</p>
+    </div>
+  </div>
+</body>
+</html>`
       }
     }
   }
