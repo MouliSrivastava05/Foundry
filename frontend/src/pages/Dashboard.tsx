@@ -24,7 +24,8 @@ import {
   Milestone,
   Coins,
   FolderOpen,
-  Monitor
+  Monitor,
+  ExternalLink
 } from 'lucide-react'
 
 
@@ -1018,13 +1019,25 @@ export const Dashboard: React.FC = () => {
                               <p className="mt-1 text-xs text-slate-500 italic">{outputs.ui.style_description}</p>
                             )}
                           </div>
-                          <a
-                            href={`data:text/html;charset=utf-8,${encodeURIComponent(outputs.ui.html_code)}`}
-                            download={`${(selectedProject?.title ?? 'blueprint').toLowerCase().replace(/\s+/g, '-')}-landing-page.html`}
-                            className="text-xs bg-violet-700 hover:bg-violet-600 text-white transition px-3 py-1.5 rounded-lg flex items-center gap-1.5 font-medium"
-                          >
-                            <FileDown className="h-3.5 w-3.5" /> Download HTML
-                          </a>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => {
+                                const blob = new Blob([outputs.ui.html_code], { type: 'text/html;charset=utf-8' })
+                                const url = URL.createObjectURL(blob)
+                                window.open(url, '_blank')
+                              }}
+                              className="text-xs bg-emerald-600 hover:bg-emerald-500 text-white transition px-3 py-1.5 rounded-lg flex items-center gap-1.5 font-medium shadow-md shadow-emerald-600/20"
+                            >
+                              <ExternalLink className="h-3.5 w-3.5" /> Launch Live Demo
+                            </button>
+                            <a
+                              href={`data:text/html;charset=utf-8,${encodeURIComponent(outputs.ui.html_code)}`}
+                              download={`${(selectedProject?.title ?? 'blueprint').toLowerCase().replace(/\s+/g, '-')}-landing-page.html`}
+                              className="text-xs bg-violet-700 hover:bg-violet-600 text-white transition px-3 py-1.5 rounded-lg flex items-center gap-1.5 font-medium"
+                            >
+                              <FileDown className="h-3.5 w-3.5" /> Download HTML
+                            </a>
+                          </div>
                         </div>
                         <div className="rounded-xl overflow-hidden border border-slate-800 shadow-2xl">
                           <div className="flex items-center gap-2 bg-slate-900 px-4 py-2 border-b border-slate-800">

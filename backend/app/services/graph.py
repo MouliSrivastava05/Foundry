@@ -487,18 +487,18 @@ async def generate_ui_node(state: GraphState) -> dict[str, Any]:
     structured_llm = llm.with_structured_output(UIModel)
 
     system_prompt = (
-        "You are an expert UI/UX Designer and Frontend Developer. "
-        "Given a startup idea, its PRD summary, and target personas, generate a complete, "
-        "self-contained HTML landing page for the startup product. "
+        "You are an expert Lead UI/UX Designer and Senior Frontend Engineer. "
+        "Given a startup idea, its PRD summary, core features, and personas, generate a complete, "
+        "self-contained, beautifully styled HTML5 & CSS3 single-page web app prototype for the product. "
         "Requirements:\n"
-        "- Include a <style> block with all CSS inline — no external stylesheets or CDN links.\n"
-        "- Include a visually impressive hero section with a bold headline, subtitle, and CTA button.\n"
-        "- Include a features section (3 feature cards).\n"
-        "- Include a minimal footer with the product name.\n"
-        "- Choose a modern, premium color palette that matches the startup's industry and personality.\n"
-        "- Use CSS variables, smooth hover transitions, and a clean professional layout.\n"
-        "- Do NOT use any JavaScript or external framework references.\n"
-        "Output only the structured JSON conforming to the schema."
+        "- Include inline <style> CSS and clean vanilla <script> JavaScript for interactive elements — no external framework links.\n"
+        "- Build a navigation bar with brand logo, interactive navigation links, and a primary CTA button.\n"
+        "- Include an impactful hero section with a bold headline, value proposition subtext, and an interactive CTA.\n"
+        "- Include an interactive Product Features / Live Dashboard Preview section with clickable tabs or interactive feature cards.\n"
+        "- Include a working Lead Capture / Demo Request modal or form with an interactive submit notification toast.\n"
+        "- Use modern dark glassmorphism styling, CSS variables, vibrant gradient accents, flex/grid layouts, and smooth hover effects.\n"
+        "- Ensure full responsiveness for both desktop and mobile viewports.\n"
+        "Output strictly structured JSON conforming to the schema."
     )
 
     user_content = (
