@@ -9,15 +9,21 @@ celery_app = Celery(
     backend=settings.celery_result_backend
 )
 
-# Optional configuration overrides
-celery_app.conf.update(
-    task_serializer="json",
-    accept_content=["json"],
-    result_serializer="json",
-    timezone="UTC",
-    enable_utc=True,
-    task_track_started=True,
-)
+conf_dict = {
+    "task_serializer": "json",
+    "accept_content": ["json"],
+    "result_serializer": "json",
+    "timezone": "UTC",
+    "enable_utc": True,
+    "task_track_started": True,
+}
+
+if settings.celery_broker_url.startswith("rediss://"):
+    conf_dict["broker_use_ssl"] = {"ssl_cert_reqs": None}
+if settings.celery_result_backend.startswith("rediss://"):
+    conf_dict["redis_backend_use_ssl"] = {"ssl_cert_reqs": None}
+
+celery_app.conf.update(**conf_dict)
 
 # Auto-discover tasks from app/services/tasks.py
 celery_app.autodiscover_tasks(["app.services"], force=True)
