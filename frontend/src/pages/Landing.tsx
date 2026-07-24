@@ -8,9 +8,6 @@ import {
   FileText, 
   Cpu, 
   Code2, 
-  CheckCircle2, 
-  Zap, 
-  ShieldCheck, 
   Globe 
 } from 'lucide-react'
 

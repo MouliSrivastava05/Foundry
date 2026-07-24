@@ -46,7 +46,7 @@ export const Dashboard: React.FC = () => {
   const [pipelineStep, setPipelineStep] = useState<number>(-1) // -1: not started, 0-4: steps, 5: complete
   const [pipelineProgress, setPipelineProgress] = useState(0)
   const [pipelineLogs, setPipelineLogs] = useState<string[]>([])
-  const [activeTab, setActiveTab] = useState<'research' | 'prd' | 'personas' | 'stories' | 'prioritization' | 'architecture' | 'roadmap' | 'cost' | 'scaffolding'>('research')
+  const [activeTab, setActiveTab] = useState<'research' | 'prd' | 'personas' | 'stories' | 'prioritization' | 'architecture' | 'roadmap' | 'cost' | 'scaffolding' | 'ui'>('research')
 
   // Load projects
   const fetchProjects = async () => {
