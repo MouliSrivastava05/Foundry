@@ -127,13 +127,14 @@ async def generate_prd_node(state: GraphState) -> dict[str, Any]:
     structured_llm = llm.with_structured_output(PRDModel)
     
     system_prompt = (
-        "You are an expert Principal Product Manager. Your task is to analyze a startup idea "
-        "and produce a comprehensive Product Requirements Document (PRD). "
-        "Take into consideration competitor data to highlight how your product differentiates itself. "
-        "You must output a structured JSON document conforming to the schema with: "
-        "1. A clean title. "
-        "2. A detailed summary describing the core user pain point and target solution. "
-        "3. A list of exactly 3 primary features, each containing a name and description."
+        "You are a World-Class Principal Product Manager and Startup Advisor. "
+        "Analyze the provided startup pitch and market research to produce an executive-ready, highly detailed "
+        "Product Requirements Document (PRD). "
+        "Your goal is to make the product strategy crystal clear for both non-technical founders and engineering leads.\n"
+        "Requirements:\n"
+        "1. Title: A professional, catchy PRD document title.\n"
+        "2. Summary: A rich, multi-sentence executive summary explaining the target user pain point, market opportunity, and overall product vision.\n"
+        "3. Features: Provide 3-4 primary software features. For each feature, write a detailed, layperson-friendly description explaining what it does, why it is critical, and how it solves the user's problem."
     )
     
     user_content = (
@@ -316,11 +317,12 @@ async def generate_architecture_node(state: GraphState) -> dict[str, Any]:
     structured_llm = llm.with_structured_output(ArchitectModel)
     
     system_prompt = (
-        "You are a Lead Software Architect. Given the PRD requirements and features, "
-        "design a high-level technical architecture. "
-        "Output a structured JSON document conforming to the schema with: "
-        "1. Exactly 3 database table designs with names and column attributes. "
-        "2. Exactly 3 core REST API endpoints with path, method, and description."
+        "You are a Lead Software Architect and Technology Strategist. "
+        "Evaluate the Product Requirements Document (PRD) features and design a clean, production-grade technical architecture blueprint. "
+        "Write descriptions using plain-English, layperson-friendly language so startup founders can easily understand the tech stack.\n"
+        "Requirements:\n"
+        "1. Database Schema: Design 3-4 core database tables. In the column list, provide field names, data types, and brief plain-English notes (e.g. 'user_id (UUID, PK) - Unique user identifier').\n"
+        "2. REST API Routes: Design 3-4 core HTTP REST API endpoints. For each route, provide the HTTP method (GET, POST, PUT, DELETE), endpoint path, and a clear description of the action it performs."
     )
     
     user_content = f"PRD: {json.dumps(state['prd'])}"
@@ -359,10 +361,13 @@ async def generate_roadmap_node(state: GraphState) -> dict[str, Any]:
     structured_llm = llm.with_structured_output(RoadmapModel)
     
     system_prompt = (
-        "You are an expert Agile Scrum Master. Given a list of user stories, "
-        "allocate every single user story ID into a 4-sprint milestone roadmap "
-        "(Sprint 1, Sprint 2, Sprint 3, and Sprint 4). "
-        "Conform strictly to the JSON schema. Each sprint list must contain story ID strings."
+        "You are an expert Agile Scrum Master and Delivery Director. "
+        "Given the list of user stories, structure a logical 4-sprint milestone roadmap:\n"
+        "- Sprint 1 (Foundation): Infrastructure, database setup, and core authentication.\n"
+        "- Sprint 2 (Core MVP): Primary user workflows and MVP features.\n"
+        "- Sprint 3 (Advanced): Third-party integrations, secondary tools, and analytics.\n"
+        "- Sprint 4 (Launch Prep): Security hardening, performance testing, and launch deployment.\n"
+        "Allocate every user story ID into one of these 4 sprints strictly conforming to the JSON schema."
     )
     
     user_content = f"User Stories: {json.dumps(state['user_stories'])}"
@@ -401,10 +406,13 @@ async def generate_cost_node(state: GraphState) -> dict[str, Any]:
     structured_llm = llm.with_structured_output(CostModel)
     
     system_prompt = (
-        "You are a Cloud FinOps Architect. Analyze the technical architecture design "
+        "You are a Senior Cloud FinOps Architect. Analyze the technical architecture design "
         "and calculate monthly cost estimates for hosting Compute, Database, and CDN infrastructure "
-        "at three tiers: 100 users, 1,000 users, and 10,000 concurrent users. "
-        "Conform strictly to the JSON schema. Include a dollar sign and context in estimates (e.g. '$15/mo' or '$250/mo')."
+        "at three scale tiers: 100 users, 1,000 users, and 10,000 concurrent active users.\n"
+        "Requirements:\n"
+        "- Include dollar amounts and provider context in your estimates (e.g. '$15/mo (Neon Serverless Postgres)', '$25/mo (Vercel CDN bandwidth)').\n"
+        "- Ensure total_monthly accurately sums up compute, database, and CDN costs for each scale tier.\n"
+        "Conform strictly to the JSON schema."
     )
     
     user_content = f"Technical Architecture: {json.dumps(state['architecture'])}"
@@ -443,9 +451,9 @@ async def generate_scaffolding_node(state: GraphState) -> dict[str, Any]:
     structured_llm = llm.with_structured_output(ScaffoldingModel)
     
     system_prompt = (
-        "You are a Senior Lead Developer. Design a copy-pasteable monorepo folder file tree structure "
-        "for a tech stack based on the architecture, and compile a quick onboarding command instructions text. "
-        "Use standard ascii layout for the file tree. Conform strictly to the JSON schema."
+        "You are a Lead Software Engineering Manager. Design a clean, copy-pasteable monorepo project folder file tree structure "
+        "aligned with modern backend (FastAPI/Node) and frontend (React/Next) architecture patterns.\n"
+        "Provide step-by-step developer onboarding instructions explaining how to install dependencies, configure environment variables, and launch the development servers."
     )
     
     user_content = (
