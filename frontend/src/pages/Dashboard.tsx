@@ -25,7 +25,11 @@ import {
   Coins,
   FolderOpen,
   Monitor,
-  ExternalLink
+  ExternalLink,
+  Trash2,
+  Edit2,
+  X,
+  Check
 } from 'lucide-react'
 
 
@@ -41,6 +45,10 @@ export const Dashboard: React.FC = () => {
   const [newTitle, setNewTitle] = useState('')
   const [newIdea, setNewIdea] = useState('')
   const [newIndustry, setNewIndustry] = useState('')
+  
+  // Edit State
+  const [editingProjectId, setEditingProjectId] = useState<number | null>(null)
+  const [editTitle, setEditTitle] = useState('')
   
   // Pipeline Simulation States
   const [pipelineStep, setPipelineStep] = useState<number>(-1) // -1: not started, 0-4: steps, 5: complete
@@ -155,6 +163,62 @@ export const Dashboard: React.FC = () => {
       setPipelineStep(-1)
       setPipelineProgress(0)
       setPipelineLogs([])
+    }
+  }
+
+  // Delete Project
+  const handleDeleteProject = async (e: React.MouseEvent, id: number) => {
+    e.stopPropagation()
+    if (!window.confirm('Are you sure you want to delete this project?')) return
+    
+    if (isDemo) {
+      setProjects(prev => prev.filter(p => p.id !== id))
+      if (selectedProject?.id === id) setSelectedProject(null)
+      return
+    }
+
+    try {
+      await api.delete(`/api/v1/projects/${id}`)
+      setProjects(prev => prev.filter(p => p.id !== id))
+      if (selectedProject?.id === id) setSelectedProject(null)
+    } catch (error) {
+      console.error('Failed to delete project:', error)
+      alert('Failed to delete project')
+    }
+  }
+
+  // Start Editing Project
+  const handleStartEdit = (e: React.MouseEvent, project: any) => {
+    e.stopPropagation()
+    setEditingProjectId(project.id)
+    setEditTitle(project.title)
+  }
+
+  // Rename Project
+  const handleRenameProject = async (e: React.MouseEvent | React.FormEvent, id: number) => {
+    if (e) e.stopPropagation()
+    
+    if (!editTitle.trim()) {
+      setEditingProjectId(null)
+      return
+    }
+
+    if (isDemo) {
+      setProjects(prev => prev.map(p => p.id === id ? { ...p, title: editTitle } : p))
+      if (selectedProject?.id === id) setSelectedProject({ ...selectedProject, title: editTitle })
+      setEditingProjectId(null)
+      return
+    }
+
+    try {
+      const response = await api.put(`/api/v1/projects/${id}`, { title: editTitle })
+      setProjects(prev => prev.map(p => p.id === id ? { ...p, title: response.data.title } : p))
+      if (selectedProject?.id === id) setSelectedProject({ ...selectedProject, title: response.data.title })
+      setEditingProjectId(null)
+    } catch (error) {
+      console.error('Failed to rename project:', error)
+      alert('Failed to rename project')
+      setEditingProjectId(null)
     }
   }
 
@@ -441,21 +505,69 @@ export const Dashboard: React.FC = () => {
               </div>
             ) : (
               projects.map(p => (
-                <button
-                  key={p.id}
-                  onClick={() => handleSelectProject(p)}
-                  className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition flex items-start gap-3 ${
-                    selectedProject?.id === p.id 
-                      ? 'bg-purple-500/10 border border-purple-500/20 text-purple-300' 
-                      : 'text-slate-400 hover:bg-slate-900/50 hover:text-slate-200'
-                  }`}
-                >
-                  <Briefcase className="h-4 w-4 mt-0.5 shrink-0" />
-                  <div className="overflow-hidden">
-                    <p className="font-semibold truncate">{p.title}</p>
-                    <p className="text-xs text-slate-500 truncate">{p.industry || 'General'}</p>
-                  </div>
-                </button>
+                <div key={p.id} className="group relative">
+                  <button
+                    onClick={() => handleSelectProject(p)}
+                    className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition flex items-start gap-3 ${
+                      selectedProject?.id === p.id 
+                        ? 'bg-purple-500/10 border border-purple-500/20 text-purple-300' 
+                        : 'text-slate-400 hover:bg-slate-900/50 hover:text-slate-200'
+                    }`}
+                  >
+                    <Briefcase className="h-4 w-4 mt-0.5 shrink-0" />
+                    <div className="overflow-hidden flex-1">
+                      {editingProjectId === p.id ? (
+                        <div 
+                          className="flex items-center gap-1"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <input
+                            type="text"
+                            value={editTitle}
+                            onChange={(e) => setEditTitle(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') handleRenameProject(e, p.id)
+                              if (e.key === 'Escape') setEditingProjectId(null)
+                            }}
+                            className="bg-slate-800 text-slate-200 text-sm px-2 py-0.5 rounded border border-slate-700 outline-none w-full focus:border-purple-500"
+                            autoFocus
+                          />
+                          <button onClick={(e) => handleRenameProject(e, p.id)} className="p-1 text-emerald-400 hover:bg-emerald-400/10 rounded">
+                            <Check className="h-3 w-3" />
+                          </button>
+                          <button onClick={(e) => { e.stopPropagation(); setEditingProjectId(null); }} className="p-1 text-slate-400 hover:bg-slate-800 rounded">
+                            <X className="h-3 w-3" />
+                          </button>
+                        </div>
+                      ) : (
+                        <>
+                          <p className="font-semibold truncate pr-12">{p.title}</p>
+                          <p className="text-xs text-slate-500 truncate">{p.industry || 'General'}</p>
+                        </>
+                      )}
+                    </div>
+                  </button>
+                  
+                  {/* Hover Actions */}
+                  {editingProjectId !== p.id && (
+                    <div className="absolute right-2 top-2.5 opacity-0 group-hover:opacity-100 transition flex items-center gap-1 bg-[#0f0f1a]/90 rounded-md p-0.5 shadow-sm border border-slate-800">
+                      <button 
+                        onClick={(e) => handleStartEdit(e, p)}
+                        className="p-1.5 text-slate-400 hover:text-blue-400 hover:bg-blue-400/10 rounded"
+                        title="Rename Project"
+                      >
+                        <Edit2 className="h-3.5 w-3.5" />
+                      </button>
+                      <button 
+                        onClick={(e) => handleDeleteProject(e, p.id)}
+                        className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-400/10 rounded"
+                        title="Delete Project"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  )}
+                </div>
               ))
             )}
           </nav>
