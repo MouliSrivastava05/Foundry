@@ -33,6 +33,32 @@ import {
 } from 'lucide-react'
 
 
+const formatRelativeTime = (isoString: string) => {
+  if (!isoString) return 'Just now'
+  const date = new Date(isoString)
+  const now = new Date()
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
+  
+  if (diffInSeconds < 60) return 'Just now'
+  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`
+  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`
+  return `${Math.floor(diffInSeconds / 86400)}d ago`
+}
+
+const getStatusBadge = (status: string) => {
+  switch (status) {
+    case 'completed':
+      return <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Completed</span>
+    case 'processing':
+      return <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20 animate-pulse">Processing</span>
+    case 'failed':
+      return <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-red-500/10 text-red-400 border border-red-500/20">Failed</span>
+    case 'idle':
+    default:
+      return <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-500/10 text-slate-400 border border-slate-500/20">Idle</span>
+  }
+}
+
 export const Dashboard: React.FC = () => {
   const { user, logout, isDemo } = useAuth()
   
@@ -541,8 +567,14 @@ export const Dashboard: React.FC = () => {
                         </div>
                       ) : (
                         <>
-                          <p className="font-semibold truncate pr-12">{p.title}</p>
-                          <p className="text-xs text-slate-500 truncate">{p.industry || 'General'}</p>
+                          <div className="flex items-center justify-between pr-10">
+                            <p className="font-semibold truncate">{p.title}</p>
+                            <span className="text-[10px] text-slate-500 whitespace-nowrap ml-2">{formatRelativeTime(p.created_at)}</span>
+                          </div>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <p className="text-xs text-slate-500 truncate">{p.industry || 'General'}</p>
+                            {getStatusBadge(p.status)}
+                          </div>
                         </>
                       )}
                     </div>
