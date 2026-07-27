@@ -76,6 +76,10 @@ export const Dashboard: React.FC = () => {
   const [editingProjectId, setEditingProjectId] = useState<number | null>(null)
   const [editTitle, setEditTitle] = useState('')
   
+  // Re-run State
+  const [showRerunModal, setShowRerunModal] = useState(false)
+  const [rerunIdea, setRerunIdea] = useState('')
+  
   // Pipeline Simulation States
   const [pipelineStep, setPipelineStep] = useState<number>(-1) // -1: not started, 0-4: steps, 5: complete
   const [pipelineProgress, setPipelineProgress] = useState(0)
@@ -336,6 +340,41 @@ export const Dashboard: React.FC = () => {
       setPipelineStep(-2)
       setPipelineLogs(['❌ [SYS] Failed to trigger backend. Check Redis/Celery worker status.'])
       alert('Error triggering pipeline run. Please verify that your backend workers and Redis are running.')
+    }
+  }
+
+  // Re-run Pipeline Trigger (v2+)
+  const handleRerunPipeline = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!rerunIdea.trim()) return
+
+    if (isDemo) {
+      const updatedProject = { ...selectedProject, idea: rerunIdea, version: selectedProject.version + 1, status: 'processing' }
+      setSelectedProject(updatedProject)
+      setProjects(prev => prev.map(p => p.id === selectedProject.id ? updatedProject : p))
+      setShowRerunModal(false)
+      
+      setPipelineStep(0)
+      setPipelineProgress(5)
+      setPipelineLogs(['[SYS] Re-initializing multi-agent orchestrator DAG...', '[SYS] Loading grounding schemas...'])
+      return
+    }
+
+    try {
+      await api.put(`/api/v1/projects/${selectedProject.id}`, { idea: rerunIdea })
+      await api.post(`/api/v1/projects/${selectedProject.id}/run`)
+      
+      const updatedProject = { ...selectedProject, idea: rerunIdea, version: selectedProject.version + 1, status: 'processing' }
+      setSelectedProject(updatedProject)
+      setProjects(prev => prev.map(p => p.id === selectedProject.id ? updatedProject : p))
+      setShowRerunModal(false)
+      
+      setPipelineLogs(['[SYS] Contacting celery backend task runner...', '[SYS] Spawning LangGraph workflow DAG...'])
+      setPipelineStep(0)
+      setPipelineProgress(10)
+    } catch (err) {
+      console.error('Failed to rerun AI pipeline', err)
+      alert('Error triggering pipeline rerun.')
     }
   }
 
@@ -642,6 +681,17 @@ export const Dashboard: React.FC = () => {
                   className="flex items-center gap-2 rounded-xl bg-purple-600/10 border border-purple-500/40 px-4 py-2 text-sm font-semibold text-purple-300 transition hover:bg-purple-600/25 active:scale-95"
                 >
                   <Play className="h-4 w-4 fill-purple-300" /> Run AI Strategist Workflow
+                </button>
+              )}
+              {pipelineStep === 5 && (
+                <button
+                  onClick={() => {
+                    setRerunIdea(selectedProject.idea || '')
+                    setShowRerunModal(true)
+                  }}
+                  className="flex items-center gap-2 rounded-xl bg-blue-600/10 border border-blue-500/40 px-4 py-2 text-sm font-semibold text-blue-300 transition hover:bg-blue-600/25 active:scale-95"
+                >
+                  <Play className="h-4 w-4 fill-blue-300" /> Re-run AI Strategist (v{selectedProject.version + 1})
                 </button>
               )}
             </header>
@@ -1293,6 +1343,56 @@ export const Dashboard: React.FC = () => {
                   className="rounded-lg bg-purple-600 px-4 py-2 text-sm font-semibold text-white hover:bg-purple-700 transition"
                 >
                   Create Blueprint
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* RE-RUN PIPELINE MODAL */}
+      {showRerunModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="glass w-full max-w-lg rounded-2xl p-8 shadow-2xl space-y-6">
+            <div className="flex justify-between items-center">
+              <div>
+                <h3 className="text-lg font-bold text-white">Re-run AI Strategist</h3>
+                <p className="text-xs text-slate-400 mt-1">Refine your idea pitch to generate a new iteration (v{selectedProject?.version + 1}).</p>
+              </div>
+              <button 
+                onClick={() => setShowRerunModal(false)}
+                className="text-slate-400 hover:text-white transition"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            
+            <form onSubmit={handleRerunPipeline} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Concept Idea Pitch</label>
+                <textarea 
+                  required
+                  rows={5}
+                  className="w-full bg-slate-900/50 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                  placeholder="Describe your refined startup idea in 1-2 paragraphs..."
+                  value={rerunIdea}
+                  onChange={(e) => setRerunIdea(e.target.value)}
+                />
+              </div>
+
+              <div className="flex justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowRerunModal(false)}
+                  className="rounded-lg border border-slate-800 bg-transparent px-4 py-2 text-sm text-slate-300 hover:bg-slate-900"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition"
+                >
+                  <Play className="h-4 w-4 fill-white" /> Generate v{selectedProject?.version + 1}
                 </button>
               </div>
             </form>
