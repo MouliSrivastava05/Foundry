@@ -59,6 +59,18 @@ const getStatusBadge = (status: string) => {
   }
 }
 
+const TabHeader = ({ title, description, icon: Icon }: { title: string, description: string, icon: any }) => (
+  <div className="mb-6 bg-slate-900/40 p-4 rounded-xl border border-slate-800 flex items-start gap-4">
+    <div className="p-2.5 bg-purple-500/10 rounded-lg text-purple-400 mt-0.5">
+      <Icon className="h-5 w-5" />
+    </div>
+    <div>
+      <h4 className="text-sm font-bold text-slate-200 mb-1.5">{title}</h4>
+      <p className="text-xs text-slate-400 leading-relaxed max-w-4xl">{description}</p>
+    </div>
+  </div>
+)
+
 export const Dashboard: React.FC = () => {
   const { user, logout, isDemo } = useAuth()
   
@@ -909,6 +921,11 @@ export const Dashboard: React.FC = () => {
                   <div className="py-4">
                     {activeTab === 'research' && outputs?.research && (
                       <div className="space-y-6 max-w-4xl animate-fadeIn">
+                        <TabHeader 
+                          title="Competitor & Market Research"
+                          description="Competitor Research helps you identify existing players, market trends, and unique opportunities. This sets the foundation for positioning your startup uniquely in the market."
+                          icon={Search}
+                        />
                         <div className="space-y-2">
                           <h3 className="text-lg font-bold text-white">Competitor & Market Landscape</h3>
                           <p className="text-slate-400 text-xs leading-relaxed">{outputs.research.market_overview}</p>
@@ -947,6 +964,11 @@ export const Dashboard: React.FC = () => {
 
                     {activeTab === 'prd' && outputs?.prd && (
                       <div className="space-y-6 max-w-4xl">
+                        <TabHeader 
+                          title="Product Requirements Document (PRD)"
+                          description="A PRD is the foundational blueprint for your product. It defines the core features, target users, and requirements so your engineering and design teams know exactly what to build."
+                          icon={FileText}
+                        />
                         <div className="space-y-2">
                           <h3 className="text-xl font-bold text-white">{outputs.prd.title}</h3>
                           <p className="text-slate-400 text-sm leading-relaxed">{outputs.prd.summary}</p>
@@ -966,7 +988,13 @@ export const Dashboard: React.FC = () => {
                     )}
 
                     {activeTab === 'personas' && outputs?.personas && (
-                      <div className="grid md:grid-cols-2 gap-6 max-w-4xl">
+                      <div className="max-w-4xl space-y-6">
+                        <TabHeader 
+                          title="Target User Personas"
+                          description="User Personas are fictional characters representing your target audience. They help you build empathy and ensure your product solves the right problems for the right people."
+                          icon={Users}
+                        />
+                        <div className="grid md:grid-cols-2 gap-6">
                         {outputs.personas.map((pers: any, idx: number) => (
                           <div key={idx} className="glass rounded-xl p-6 space-y-4">
                             <div className="flex items-center gap-3">
@@ -985,10 +1013,17 @@ export const Dashboard: React.FC = () => {
                           </div>
                         ))}
                       </div>
+                      </div>
                     )}
 
                     {activeTab === 'stories' && outputs?.userStories && (
-                      <div className="glass rounded-xl overflow-hidden max-w-4xl">
+                      <div className="max-w-4xl space-y-6">
+                        <TabHeader 
+                          title="Agile User Stories"
+                          description="User Stories break down broad features into bite-sized actionable items written from the user's perspective, making it easy for developers to understand the 'why' behind a task."
+                          icon={ListTodo}
+                        />
+                        <div className="glass rounded-xl overflow-hidden">
                         <table className="w-full border-collapse text-left text-sm text-slate-400">
                           <thead className="bg-slate-900/50 text-xs font-semibold text-white uppercase border-b border-slate-900">
                             <tr>
@@ -1008,10 +1043,17 @@ export const Dashboard: React.FC = () => {
                           </tbody>
                         </table>
                       </div>
+                      </div>
                     )}
 
                     {activeTab === 'prioritization' && outputs?.prioritization && (
-                      <div className="grid md:grid-cols-3 gap-6 max-w-4xl">
+                      <div className="space-y-6 max-w-5xl">
+                        <TabHeader 
+                          title="MoSCoW Prioritization"
+                          description="The MoSCoW method prioritizes what to build first to launch your Minimum Viable Product (MVP) quickly without feature bloat. It categorizes stories into Must-have, Should-have, and Could-have."
+                          icon={CheckCircle2}
+                        />
+                        <div className="grid md:grid-cols-3 gap-6 max-w-4xl">
                         <div className="glass rounded-xl p-5 border-t-2 border-t-red-500/50">
                           <h4 className="font-bold text-white mb-4 text-sm flex items-center gap-2">
                             <span className="h-2 w-2 rounded-full bg-red-500"></span> Must Have
@@ -1063,10 +1105,16 @@ export const Dashboard: React.FC = () => {
                           </div>
                         </div>
                       </div>
+                      </div>
                     )}
 
                     {activeTab === 'architecture' && outputs?.architecture && (
-                      <div className="space-y-6 max-w-4xl animate-fadeIn">
+                      <div className="space-y-6 max-w-5xl">
+                        <TabHeader 
+                          title="Technical Architecture"
+                          description="Technical Architecture outlines the foundational database tables and backend APIs your developers will need to support the product's features."
+                          icon={Code}
+                        />
                         <div className="space-y-3">
                           <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Database Schema Design</h4>
                           <div className="grid md:grid-cols-3 gap-4">
@@ -1116,7 +1164,13 @@ export const Dashboard: React.FC = () => {
                     )}
 
                     {activeTab === 'roadmap' && outputs?.roadmap && (
-                      <div className="grid md:grid-cols-4 gap-4 max-w-4xl animate-fadeIn">
+                      <div className="space-y-6 max-w-5xl">
+                        <TabHeader 
+                          title="Development Sprint Roadmap"
+                          description="The Sprint Roadmap organizes tasks into chronological development cycles (sprints), ensuring a structured, predictable path from day one to launch."
+                          icon={Milestone}
+                        />
+                        <div className="grid md:grid-cols-4 gap-4 animate-fadeIn">
                         {[
                           { name: 'Sprint 1', key: 'sprint_1', theme: 'border-t-blue-500/50', label: 'Foundation & DB' },
                           { name: 'Sprint 2', key: 'sprint_2', theme: 'border-t-purple-500/50', label: 'Core Features' },
@@ -1146,10 +1200,16 @@ export const Dashboard: React.FC = () => {
                           </div>
                         ))}
                       </div>
+                      </div>
                     )}
 
                     {activeTab === 'cost' && outputs?.costEstimate && (
-                      <div className="space-y-6 max-w-4xl animate-fadeIn">
+                      <div className="space-y-6 max-w-4xl">
+                        <TabHeader 
+                          title="Cloud Scaling Costs"
+                          description="Scaling Costs estimate your monthly cloud infrastructure expenses (Compute, Database, CDN) as your user base grows from 100 to 10,000 active users."
+                          icon={Coins}
+                        />
                         <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Infrastructure Scaling Projections</h4>
                         <div className="grid md:grid-cols-3 gap-6">
                           {[
@@ -1187,7 +1247,12 @@ export const Dashboard: React.FC = () => {
                     )}
 
                     {activeTab === 'scaffolding' && outputs?.scaffolding && (
-                      <div className="space-y-6 max-w-4xl animate-fadeIn">
+                      <div className="space-y-6 max-w-4xl">
+                        <TabHeader 
+                          title="Codebase Scaffolding"
+                          description="Scaffolding provides a ready-to-use codebase file structure and terminal commands to instantly kickstart your repository setup."
+                          icon={FolderOpen}
+                        />
                         <div className="space-y-3">
                           <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Project Folder Scaffolding layout</h4>
                           <div className="rounded-xl border border-slate-900 bg-black/60 p-5 font-mono text-[11px] text-slate-300 overflow-x-auto shadow-inner leading-relaxed whitespace-pre">
@@ -1205,7 +1270,12 @@ export const Dashboard: React.FC = () => {
                     )}
 
                     {activeTab === 'ui' && outputs?.ui && (
-                      <div className="space-y-5 animate-fadeIn">
+                      <div className="space-y-6">
+                        <TabHeader 
+                          title="Interactive UI Preview"
+                          description="The UI Preview generates a fully interactive HTML/CSS prototype of your core landing page or app dashboard, bringing your idea to life visually."
+                          icon={Monitor}
+                        />
                         <div className="flex items-center justify-between">
                           <div>
                             <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Generated Landing Page Preview</h4>

@@ -86,9 +86,10 @@ async def generate_research_node(state: GraphState) -> dict[str, Any]:
     
     system_prompt = (
         "You are an expert Market Researcher. Given a startup idea and real-world web search snippets, "
-        "analyze and identify direct or indirect competitors, provide a market trend overview, "
-        "and list opportunity gaps or differentiators. "
-        "Conform strictly to the JSON schema. Provide exactly 2-3 competitors with names, urls, and summaries."
+        "analyze and identify direct or indirect competitors. Provide an extensive, beginner-friendly paragraph "
+        "for the market overview, completely avoiding cryptic business jargon. "
+        "List opportunity gaps or differentiators clearly so a first-time founder understands how to position their product. "
+        "Conform strictly to the JSON schema. Provide exactly 2-3 competitors with names, urls, and detailed, plain-English summaries."
     )
     
     user_content = f"Startup Idea: {state['idea']}\nSearch Snippets:\n{search_context}"
@@ -130,11 +131,11 @@ async def generate_prd_node(state: GraphState) -> dict[str, Any]:
         "You are a World-Class Principal Product Manager and Startup Advisor. "
         "Analyze the provided startup pitch and market research to produce an executive-ready, highly detailed "
         "Product Requirements Document (PRD). "
-        "Your goal is to make the product strategy crystal clear for both non-technical founders and engineering leads.\n"
+        "Your goal is to make the product strategy crystal clear for non-technical, first-time founders.\n"
         "Requirements:\n"
         "1. Title: A professional, catchy PRD document title.\n"
-        "2. Summary: A rich, multi-sentence executive summary explaining the target user pain point, market opportunity, and overall product vision.\n"
-        "3. Features: Provide 3-4 primary software features. For each feature, write a detailed, layperson-friendly description explaining what it does, why it is critical, and how it solves the user's problem."
+        "2. Summary: A very rich, beginner-friendly, multi-paragraph executive summary explaining the target user pain point, market opportunity, and exactly how this product solves it.\n"
+        "3. Features: Provide 3-4 primary software features. For each feature, write a highly detailed, layperson-friendly description (3-4 sentences) explicitly explaining the 'why' behind the technology in simple terms."
     )
     
     user_content = (
@@ -179,12 +180,12 @@ async def generate_personas_node(state: GraphState) -> dict[str, Any]:
     
     system_prompt = (
         "You are an expert UX Researcher. Given a startup idea and its Product Requirements Document (PRD), "
-        "generate exactly 2 distinct user personas (target customer profiles). "
+        "generate exactly 2 distinct user personas (target customer profiles) that are deeply humanized and relatable for a first-time founder.\n"
         "Conform strictly to the JSON schema. Each persona must include: "
-        "1. A name. "
-        "2. Their role/demographic background. "
-        "3. A core goal they want to achieve. "
-        "4. A primary frustration or pain point they experience."
+        "1. A name.\n"
+        "2. A vivid, highly descriptive backstory/demographic role.\n"
+        "3. A core goal they passionately want to achieve.\n"
+        "4. A deeply humanized primary frustration or pain point they experience in their daily life that this startup will solve."
     )
     
     user_content = (
@@ -231,7 +232,7 @@ async def generate_stories_node(state: GraphState) -> dict[str, Any]:
         "Given the PRD features and target user personas, write exactly 4 detailed user stories. "
         "Conform strictly to the JSON schema. "
         "Each story must have a deterministic ID (e.g. US-001, US-002, US-003, US-004), a title, "
-        "and a standard Agile description: 'As a [role], I want to [action] so that [benefit]'."
+        "and a heavily extended Agile description: 'As a [role], I want to [action] so that [benefit]'. Add 2-3 extra sentences of context to help non-technical founders understand the 'why' behind this user story."
     )
     
     user_content = (
@@ -319,10 +320,10 @@ async def generate_architecture_node(state: GraphState) -> dict[str, Any]:
     system_prompt = (
         "You are a Lead Software Architect and Technology Strategist. "
         "Evaluate the Product Requirements Document (PRD) features and design a clean, production-grade technical architecture blueprint. "
-        "Write descriptions using plain-English, layperson-friendly language so startup founders can easily understand the tech stack.\n"
+        "Write descriptions using highly expansive, plain-English, layperson-friendly language so startup founders can easily understand the tech stack.\n"
         "Requirements:\n"
-        "1. Database Schema: Design 3-4 core database tables. In the column list, provide field names, data types, and brief plain-English notes (e.g. 'user_id (UUID, PK) - Unique user identifier').\n"
-        "2. REST API Routes: Design 3-4 core HTTP REST API endpoints. For each route, provide the HTTP method (GET, POST, PUT, DELETE), endpoint path, and a clear description of the action it performs."
+        "1. Database Schema: Design 3-4 core database tables. In the column list, provide field names, data types, and heavily detailed plain-English notes explicitly explaining why this column matters for the business.\n"
+        "2. REST API Routes: Design 3-4 core HTTP REST API endpoints. For each route, provide the HTTP method (GET, POST, PUT, DELETE), endpoint path, and a detailed non-technical description of the business action it performs."
     )
     
     user_content = f"PRD: {json.dumps(state['prd'])}"
@@ -411,6 +412,7 @@ async def generate_cost_node(state: GraphState) -> dict[str, Any]:
         "at three scale tiers: 100 users, 1,000 users, and 10,000 concurrent active users.\n"
         "Requirements:\n"
         "- Include dollar amounts and provider context in your estimates (e.g. '$15/mo (Neon Serverless Postgres)', '$25/mo (Vercel CDN bandwidth)').\n"
+        "- Alongside the estimate, write a 1-2 sentence beginner-friendly explanation of what the resource actually does (e.g., 'Compute is the brain of your app').\n"
         "- Ensure total_monthly accurately sums up compute, database, and CDN costs for each scale tier.\n"
         "Conform strictly to the JSON schema."
     )
