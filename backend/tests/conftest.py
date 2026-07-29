@@ -1,7 +1,10 @@
 import asyncio
 from collections.abc import AsyncGenerator
+# pyrefly: ignore [missing-import]
 import pytest
+# pyrefly: ignore [missing-import]
 from httpx import AsyncClient, ASGITransport
+# pyrefly: ignore [missing-import]
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from app.main import app
@@ -14,7 +17,7 @@ _async_url = settings.database_url.replace("postgresql://", "postgresql+asyncpg:
 # Create a test engine
 test_engine = create_async_engine(_async_url, echo=False)
 TestSessionLocal = async_sessionmaker(
-    test_engine, class_=AsyncSession, expire_on_commit=False
+    test_engine, class_=AsyncSession, expire_on_commit=False 
 )
 
 @pytest.fixture(scope="session")

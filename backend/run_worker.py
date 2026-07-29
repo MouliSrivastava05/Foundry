@@ -1,6 +1,7 @@
 import os
 import threading
 from http.server import HTTPServer, BaseHTTPRequestHandler
+# pyrefly: ignore [missing-import]
 import structlog
 
 logger = structlog.get_logger()
