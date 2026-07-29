@@ -1,4 +1,4 @@
-from app.schemas.user import UserRegister, UserLogin, UserResponse, Token, TokenPayload
+from app.schemas.user import UserRegister, UserLogin, UserResponse, Token, TokenPayload, UserUpdateProfile, UserUpdatePassword
 from app.schemas.project import ProjectCreate, ProjectUpdate, ProjectResponse
 from app.schemas.agent_output import AgentOutputCreate, AgentOutputResponse
 
@@ -13,4 +13,6 @@ __all__ = [
     "ProjectResponse",
     "AgentOutputCreate",
     "AgentOutputResponse",
+    "UserUpdateProfile",
+    "UserUpdatePassword",
 ]
