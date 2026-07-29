@@ -6,6 +6,8 @@ interface User {
   name: string
   email: string
   created_at: string
+  groq_api_key?: string | null
+  tavily_api_key?: string | null
 }
 
 
@@ -19,6 +21,7 @@ interface AuthContextType {
   logout: () => void
   enableDemoMode: () => void
   disableDemoMode: () => void
+  setUserProfile: (user: User) => void
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -139,6 +142,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         logout,
         enableDemoMode,
         disableDemoMode,
+        setUserProfile: setUser,
       }}
     >
       {children}

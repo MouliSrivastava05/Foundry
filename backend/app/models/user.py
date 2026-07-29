@@ -14,6 +14,8 @@ class User(Base):
     created_at: Mapped[datetime.datetime] = mapped_column(
         DateTime, default=datetime.datetime.utcnow, nullable=False
     )
+    groq_api_key: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    tavily_api_key: Mapped[str | None] = mapped_column(String(255), nullable=True)
 
     # Relationships
     projects: Mapped[list["Project"]] = relationship(

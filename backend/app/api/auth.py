@@ -8,7 +8,7 @@ from sqlalchemy.future import select
 from app.core import get_settings, hash_password, verify_password, create_access_token
 from app.db import get_db
 from app.models import User
-from app.schemas import UserRegister, UserResponse, Token, UserLogin
+from app.schemas import UserRegister, UserResponse, Token, UserLogin, UserUpdateProfile, UserUpdatePassword
 from app.api.deps import get_current_user
 
 logger = structlog.get_logger()
@@ -92,3 +92,44 @@ async def get_me(current_user: User = Depends(get_current_user)):
     Get current logged in user profile.
     """
     return current_user
+
+@router.put("/profile", response_model=UserResponse)
+async def update_profile(
+    user_in: UserUpdateProfile,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Update user profile and API keys.
+    """
+    if user_in.name is not None:
+        current_user.name = user_in.name
+    if user_in.groq_api_key is not None:
+        current_user.groq_api_key = user_in.groq_api_key
+    if user_in.tavily_api_key is not None:
+        current_user.tavily_api_key = user_in.tavily_api_key
+        
+    db.add(current_user)
+    await db.commit()
+    await db.refresh(current_user)
+    return current_user
+
+@router.put("/password", status_code=status.HTTP_200_OK)
+async def update_password(
+    password_in: UserUpdatePassword,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Update user password.
+    """
+    if not verify_password(password_in.current_password, current_user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Incorrect current password"
+        )
+        
+    current_user.hashed_password = hash_password(password_in.new_password)
+    db.add(current_user)
+    await db.commit()
+    return {"message": "Password updated successfully"}

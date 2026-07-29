@@ -5,21 +5,21 @@ from app.core import get_settings
 logger = structlog.get_logger()
 settings = get_settings()
 
-def perform_web_search(query: str, max_results: int = 5) -> str:
+def perform_web_search(query: str, max_results: int = 5, api_key: str | None = None) -> str:
     """
     Performs a live competitor/market research search using Tavily API.
     Returns a unified text chunk containing the snippets and search contexts.
     If the Tavily API Key is missing or query fails, returns mock competitor data.
     """
-    api_key = settings.tavily_api_key
+    key = api_key or settings.tavily_api_key
     
-    if not api_key:
+    if not key:
         logger.warning("tavily_api_key_missing_using_fallback", query=query)
         return get_mock_research_data(query)
 
     try:
         logger.info("tavily_search_request", query=query, max_results=max_results)
-        client = TavilyClient(api_key=api_key)
+        client = TavilyClient(api_key=key)
         
         # We run a search with "advanced" search depth to get premium competitor specs
         response = client.search(query=query, search_depth="advanced", max_results=max_results)

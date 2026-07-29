@@ -22,7 +22,7 @@ def is_rate_limit_error(exception: Exception) -> bool:
     return False
 
 # Initialize the base LLM model
-def get_llm(model_name: str = "llama3-70b-8192", temperature: float = 0.2) -> ChatGroq:
+def get_llm(model_name: str = "llama3-70b-8192", temperature: float = 0.2, api_key: str | None = None) -> ChatGroq:
     """
     Initializes and returns the ChatGroq model instance.
     Uses Settings configuration for LangSmith tracing automatically if set.
@@ -35,7 +35,7 @@ def get_llm(model_name: str = "llama3-70b-8192", temperature: float = 0.2) -> Ch
         logger.info("langsmith_tracing_enabled", project=settings.langsmith_project)
 
     return ChatGroq(
-        api_key=settings.groq_api_key,
+        api_key=api_key or settings.groq_api_key,
         model_name=model_name,
         temperature=temperature
     )

@@ -43,6 +43,8 @@ class GraphState(TypedDict):
     tokens_used: int
     duration_ms: int
     version: int
+    groq_api_key: Optional[str]
+    tavily_api_key: Optional[str]
 
 # ── Helper function to save outputs to DB ─────────────────────────────────────
 
@@ -78,10 +80,10 @@ async def generate_research_node(state: GraphState) -> dict[str, Any]:
     
     # 1. Fetch live competitor/market details using Tavily
     query = f"{state['idea']} competitors {state.get('industry') or ''}"
-    search_context = perform_web_search(query)
+    search_context = perform_web_search(query, api_key=state.get('tavily_api_key'))
     
     # 2. Invoke Groq LLM to structure competitor and market details
-    llm = get_llm()
+    llm = get_llm(api_key=state.get('groq_api_key'))
     structured_llm = llm.with_structured_output(ResearchModel)
     
     system_prompt = (
@@ -124,7 +126,7 @@ async def generate_research_node(state: GraphState) -> dict[str, Any]:
 
 async def generate_prd_node(state: GraphState) -> dict[str, Any]:
     logger.info("generating_prd", project_id=state["project_id"])
-    llm = get_llm()
+    llm = get_llm(api_key=state.get('groq_api_key'))
     structured_llm = llm.with_structured_output(PRDModel)
     
     system_prompt = (
@@ -175,7 +177,7 @@ async def generate_prd_node(state: GraphState) -> dict[str, Any]:
 
 async def generate_personas_node(state: GraphState) -> dict[str, Any]:
     logger.info("generating_personas", project_id=state["project_id"])
-    llm = get_llm()
+    llm = get_llm(api_key=state.get('groq_api_key'))
     structured_llm = llm.with_structured_output(PersonaListModel)
     
     system_prompt = (
@@ -224,7 +226,7 @@ async def generate_personas_node(state: GraphState) -> dict[str, Any]:
 
 async def generate_stories_node(state: GraphState) -> dict[str, Any]:
     logger.info("generating_stories", project_id=state["project_id"])
-    llm = get_llm()
+    llm = get_llm(api_key=state.get('groq_api_key'))
     structured_llm = llm.with_structured_output(UserStoryListModel)
     
     system_prompt = (
@@ -271,7 +273,7 @@ async def generate_stories_node(state: GraphState) -> dict[str, Any]:
 
 async def generate_prioritization_node(state: GraphState) -> dict[str, Any]:
     logger.info("generating_prioritization", project_id=state["project_id"])
-    llm = get_llm()
+    llm = get_llm(api_key=state.get('groq_api_key'))
     structured_llm = llm.with_structured_output(PrioritizationModel)
     
     system_prompt = (
@@ -314,7 +316,7 @@ async def generate_prioritization_node(state: GraphState) -> dict[str, Any]:
 
 async def generate_architecture_node(state: GraphState) -> dict[str, Any]:
     logger.info("generating_architecture", project_id=state["project_id"])
-    llm = get_llm()
+    llm = get_llm(api_key=state.get('groq_api_key'))
     structured_llm = llm.with_structured_output(ArchitectModel)
     
     system_prompt = (
@@ -358,7 +360,7 @@ async def generate_architecture_node(state: GraphState) -> dict[str, Any]:
 
 async def generate_roadmap_node(state: GraphState) -> dict[str, Any]:
     logger.info("generating_roadmap", project_id=state["project_id"])
-    llm = get_llm()
+    llm = get_llm(api_key=state.get('groq_api_key'))
     structured_llm = llm.with_structured_output(RoadmapModel)
     
     system_prompt = (
@@ -403,7 +405,7 @@ async def generate_roadmap_node(state: GraphState) -> dict[str, Any]:
 
 async def generate_cost_node(state: GraphState) -> dict[str, Any]:
     logger.info("generating_cost_estimate", project_id=state["project_id"])
-    llm = get_llm()
+    llm = get_llm(api_key=state.get('groq_api_key'))
     structured_llm = llm.with_structured_output(CostModel)
     
     system_prompt = (
@@ -449,7 +451,7 @@ async def generate_cost_node(state: GraphState) -> dict[str, Any]:
 
 async def generate_scaffolding_node(state: GraphState) -> dict[str, Any]:
     logger.info("generating_scaffolding", project_id=state["project_id"])
-    llm = get_llm()
+    llm = get_llm(api_key=state.get('groq_api_key'))
     structured_llm = llm.with_structured_output(ScaffoldingModel)
     
     system_prompt = (
@@ -493,7 +495,7 @@ async def generate_scaffolding_node(state: GraphState) -> dict[str, Any]:
 
 async def generate_ui_node(state: GraphState) -> dict[str, Any]:
     logger.info("generating_ui_blueprint", project_id=state["project_id"])
-    llm = get_llm()
+    llm = get_llm(api_key=state.get('groq_api_key'))
     structured_llm = llm.with_structured_output(UIModel)
 
     system_prompt = (

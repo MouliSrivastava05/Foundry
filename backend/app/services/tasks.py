@@ -3,7 +3,7 @@ import asyncio
 import structlog
 from app.services.celery_app import celery_app
 from app.db.session import async_session_factory
-from app.models import Project, AgentOutput
+from app.models import Project, AgentOutput, User
 from app.services.graph import ai_graph
 # pyrefly: ignore [missing-import]
 from sqlalchemy import select, func
@@ -21,6 +21,9 @@ async def run_ai_pipeline_async(project_id: int):
             if not project:
                 logger.error("project_not_found", project_id=project_id)
                 return
+            
+            # Get user for API keys
+            user = await session.get(User, project.created_by)
             
             # Update status to processing
             project.status = "processing"
@@ -53,7 +56,9 @@ async def run_ai_pipeline_async(project_id: int):
         "ui": None,
         "tokens_used": 0,
         "duration_ms": 0,
-        "version": next_version
+        "version": next_version,
+        "groq_api_key": user.groq_api_key if user else None,
+        "tavily_api_key": user.tavily_api_key if user else None
     }
     
     try:

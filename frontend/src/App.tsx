@@ -7,6 +7,7 @@ import { Login } from './pages/Login'
 import { Signup } from './pages/Signup'
 import { Dashboard } from './pages/Dashboard'
 import { Landing } from './pages/Landing'
+import { Settings } from './pages/Settings'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -34,6 +35,14 @@ export const App: React.FC = () => {
               element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute>
+                  <Settings />
                 </ProtectedRoute>
               }
             />

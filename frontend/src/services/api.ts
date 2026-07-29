@@ -37,3 +37,13 @@ api.interceptors.response.use(
     return Promise.reject(error)
   }
 )
+
+export const updateProfile = async (data: { name?: string, groq_api_key?: string, tavily_api_key?: string }) => {
+  const response = await api.put('/auth/profile', data)
+  return response.data
+}
+
+export const updatePassword = async (data: { current_password?: string, new_password?: string }) => {
+  const response = await api.put('/auth/password', data)
+  return response.data
+}

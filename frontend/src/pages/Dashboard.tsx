@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { PDFDownloadLink } from '@react-pdf/renderer'
 import { BlueprintPDF } from '../components/BlueprintPDF'
 import { useAuth } from '../store/AuthContext'
@@ -29,7 +30,8 @@ import {
   Trash2,
   Edit2,
   X,
-  Check
+  Check,
+  Settings as SettingsIcon
 } from 'lucide-react'
 
 
@@ -87,6 +89,8 @@ export const Dashboard: React.FC = () => {
   // Edit State
   const [editingProjectId, setEditingProjectId] = useState<number | null>(null)
   const [editTitle, setEditTitle] = useState('')
+
+  const navigate = useNavigate()
   
   // Re-run State
   const [showRerunModal, setShowRerunModal] = useState(false)
@@ -662,13 +666,22 @@ export const Dashboard: React.FC = () => {
             <p className="text-sm font-semibold text-white truncate">{user?.name || 'User Account'}</p>
             <p className="text-xs text-slate-500 truncate">{user?.email || 'user@example.com'}</p>
           </div>
-          <button
-            onClick={logout}
-            className="p-2 text-slate-400 hover:text-red-400 transition rounded-lg hover:bg-red-500/5"
-            title="Log Out"
-          >
-            <LogOut className="h-5 w-5" />
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => navigate('/settings')}
+              className="p-2 text-slate-400 hover:text-white transition rounded-lg hover:bg-slate-800"
+              title="Settings"
+            >
+              <SettingsIcon className="h-5 w-5" />
+            </button>
+            <button
+              onClick={logout}
+              className="p-2 text-slate-400 hover:text-red-400 transition rounded-lg hover:bg-red-500/5"
+              title="Log Out"
+            >
+              <LogOut className="h-5 w-5" />
+            </button>
+          </div>
         </div>
       </aside>
 
