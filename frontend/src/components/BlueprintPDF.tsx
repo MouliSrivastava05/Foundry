@@ -197,14 +197,17 @@ const styles = StyleSheet.create({
     letterSpacing: 0.3,
   },
   tocRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 9,
+    paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#1A1A30',
   },
   tocRowLast: {
     borderBottomWidth: 0,
+  },
+  tocRowTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 3,
   },
   tocNum: {
     width: 26,
@@ -213,13 +216,13 @@ const styles = StyleSheet.create({
     fontFamily: 'Helvetica-Bold',
   },
   tocIcon: {
-    width: 22,
+    width: 26,
     height: 22,
     backgroundColor: '#7C3AED18',
     borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 12,
+    marginRight: 14,
   },
   tocIconText: {
     fontSize: 8,
@@ -227,7 +230,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Helvetica-Bold',
   },
   tocLabel: {
-    flex: 1,
     fontSize: 11,
     color: C.slate200,
     fontFamily: 'Helvetica-Bold',
@@ -235,20 +237,21 @@ const styles = StyleSheet.create({
   tocDesc: {
     fontSize: 8,
     color: C.slate500,
-    marginTop: 1,
+    marginTop: 2,
+    paddingLeft: 40,
   },
   tocDots: {
     flex: 1,
-    marginHorizontal: 8,
+    marginHorizontal: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#1E1E3A',
+    borderBottomColor: '#252545',
     borderBottomStyle: 'dashed',
   },
   tocPage2: {
-    fontSize: 9,
-    color: C.slate500,
+    fontSize: 10,
+    color: C.accentLight,
     fontFamily: 'Helvetica-Bold',
-    width: 20,
+    width: 22,
     textAlign: 'right',
   },
 
@@ -814,15 +817,17 @@ export const BlueprintPDF: React.FC<BlueprintPDFProps> = ({
 
           {TOC_ITEMS.map((item, i) => (
             <View key={i} style={[styles.tocRow, i === TOC_ITEMS.length - 1 ? styles.tocRowLast : {}]}>
-              <View style={styles.tocIcon}>
-                <Text style={styles.tocIconText}>{item.num}</Text>
-              </View>
-              <View style={{ flex: 1 }}>
+              {/* Title row: icon + label + dots + page number all on ONE line */}
+              <View style={styles.tocRowTop}>
+                <View style={styles.tocIcon}>
+                  <Text style={styles.tocIconText}>{item.num}</Text>
+                </View>
                 <Text style={styles.tocLabel}>{item.label}</Text>
-                <Text style={styles.tocDesc}>{item.desc}</Text>
+                <View style={styles.tocDots} />
+                <Text style={styles.tocPage2}>{item.page}</Text>
               </View>
-              <View style={styles.tocDots} />
-              <Text style={styles.tocPage2}>{item.page}</Text>
+              {/* Description sits cleanly below, indented to match label */}
+              <Text style={styles.tocDesc}>{item.desc}</Text>
             </View>
           ))}
         </View>
