@@ -1065,7 +1065,7 @@ export const BlueprintPDF: React.FC<BlueprintPDFProps> = ({
               {outputs.architecture.tables?.map((table: any, i: number) => (
                 <View key={i} style={[styles.card, styles.gridItem, { borderTopWidth: 2, borderTopColor: C.teal }]}>
                   <Text style={[styles.cardTitle, { color: C.teal, marginBottom: 8 }]}>
-                    📦 {table.name}
+                    {table.name}
                   </Text>
                   {table.columns?.map((col: string, ci: number) => (
                     <View key={ci} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 3 }}>
@@ -1239,9 +1239,18 @@ export const BlueprintPDF: React.FC<BlueprintPDFProps> = ({
                   desc: 'Interactive 3-column grid displaying core product capabilities with icons and concise benefit-driven copy.',
                   color: C.blue,
                 },
+              ].map((block, i) => (
+                <View key={i} style={[styles.card, styles.gridItem, { borderTopWidth: 2, borderTopColor: block.color }]}>
+                  <Text style={[styles.cardTitle, { color: block.color }]}>{block.title}</Text>
+                  <Text style={styles.cardText}>{block.desc}</Text>
+                </View>
+              ))}
+            </View>
+            <View style={styles.grid2}>
+              {[
                 {
-                  title: 'Social Proof',
-                  desc: 'Testimonials, logos, and usage statistics to establish trust with first-time visitors.',
+                  title: 'Social Proof & Trust',
+                  desc: 'Testimonials, logos, and usage statistics to establish credibility with first-time visitors.',
                   color: C.teal,
                 },
                 {
@@ -1259,7 +1268,7 @@ export const BlueprintPDF: React.FC<BlueprintPDFProps> = ({
 
             <View style={styles.insightBox}>
               <Text style={styles.insightText}>
-                🚀  Live Web App Preview Available — Launch the interactive prototype directly from your Foundry dashboard under the "UI Preview" tab, or export the full self-contained HTML/CSS package for instant deployment.
+                Live Web App Preview Available — Launch the interactive prototype directly from your Foundry dashboard under the "UI Preview" tab, or export the full self-contained HTML/CSS package for instant deployment.
               </Text>
             </View>
           </View>
