@@ -65,6 +65,13 @@
   --duration-fast: 120ms;
   --duration:      220ms;
   --duration-slow: 400ms;
+
+  /* Metallic Silver palette */
+  --silver-dim:    #6B6B7A;
+  --silver:        #A8A8B8;
+  --silver-mid:    #C8C8D8;
+  --silver-bright: #E4E4F0;
+  --silver-shine:  #F2F2FA;
 }
 
 /* ── Base Reset ────────────────────────────────────────────────────────────── */
@@ -93,13 +100,18 @@
     /* Subtle dot grid background — technical, not AI-glow */
     background-image: radial-gradient(
       circle,
-      rgba(255, 255, 255, 0.035) 1px,
+      rgba(255, 255, 255, 0.032) 1px,
       transparent 1px
     );
     background-size: 28px 28px;
     background-attachment: fixed;
 
     @apply selection:bg-orange-500/20 selection:text-orange-200;
+  }
+
+  /* Custom smooth scroll — native but with offset for sticky header */
+  html {
+    scroll-padding-top: 70px;
   }
 
   /* Headings */
@@ -147,7 +159,7 @@
 @keyframes fadeUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(28px);
   }
   to {
     opacity: 1;
@@ -166,7 +178,7 @@
   from {
     opacity: 0;
     clip-path: inset(0 0 100% 0);
-    transform: translateY(12px);
+    transform: translateY(14px);
   }
   to {
     opacity: 1;
@@ -179,6 +191,12 @@
 @keyframes shimmer {
   0%   { background-position: -400px 0; }
   100% { background-position: 400px 0; }
+}
+
+/* Silver shimmer — metallic border sweep */
+@keyframes silverSweep {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
 }
 
 /* Pulse glow — accent elements */
@@ -202,7 +220,7 @@
 @keyframes slideInLeft {
   from {
     opacity: 0;
-    transform: translateX(-16px);
+    transform: translateX(-20px);
   }
   to {
     opacity: 1;
@@ -214,7 +232,7 @@
 @keyframes scaleIn {
   from {
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale(0.94);
   }
   to {
     opacity: 1;
@@ -238,9 +256,12 @@
 
 /* Counter tick — number incrementing */
 @keyframes countUp {
-  from { transform: translateY(8px); opacity: 0; }
-  to   { transform: translateY(0);   opacity: 1; }
+  from { transform: translateY(10px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
 }
+
+/* Scroll progress fill */
+@keyframes none {} /* placeholder */
 
 /* ── Animation Utility Classes ─────────────────────────────────────────────── */
 
@@ -285,20 +306,90 @@
 .stagger-6  { animation-delay: 360ms; }
 
 /* ── Intersection Observer — Scroll-triggered animations ───────────────────── */
-/* Elements start invisible; JS adds .is-visible to trigger the animation */
+/* 3D perspective container — wrap sections in this for depth */
+.perspective-container {
+  perspective: 1200px;
+  perspective-origin: 50% 30%;
+}
+
+/* Base scroll-animate state — 3D-aware */
 .scroll-animate {
   opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+  transform: translateY(32px) rotateX(4deg);
+  transform-origin: top center;
+  transition:
+    opacity 0.65s var(--ease),
+    transform 0.65s var(--ease);
+  will-change: opacity, transform;
 }
 .scroll-animate.is-visible {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) rotateX(0deg);
 }
-.scroll-animate.delay-1 { transition-delay: 80ms; }
-.scroll-animate.delay-2 { transition-delay: 160ms; }
-.scroll-animate.delay-3 { transition-delay: 240ms; }
-.scroll-animate.delay-4 { transition-delay: 320ms; }
+
+/* Slide from left variant */
+.scroll-animate-left {
+  opacity: 0;
+  transform: translateX(-28px);
+  transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+}
+.scroll-animate-left.is-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Slide from right variant */
+.scroll-animate-right {
+  opacity: 0;
+  transform: translateX(28px);
+  transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+}
+.scroll-animate-right.is-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Scale up variant */
+.scroll-animate-scale {
+  opacity: 0;
+  transform: scale(0.92);
+  transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+}
+.scroll-animate-scale.is-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.scroll-animate.delay-1,
+.scroll-animate-left.delay-1,
+.scroll-animate-right.delay-1,
+.scroll-animate-scale.delay-1  { transition-delay: 80ms; }
+.scroll-animate.delay-2,
+.scroll-animate-left.delay-2,
+.scroll-animate-right.delay-2,
+.scroll-animate-scale.delay-2  { transition-delay: 160ms; }
+.scroll-animate.delay-3,
+.scroll-animate-left.delay-3,
+.scroll-animate-right.delay-3,
+.scroll-animate-scale.delay-3  { transition-delay: 240ms; }
+.scroll-animate.delay-4,
+.scroll-animate-left.delay-4,
+.scroll-animate-right.delay-4,
+.scroll-animate-scale.delay-4  { transition-delay: 320ms; }
+
+/* ── Scroll Progress Bar ───────────────────────────────────────────────────── */
+.scroll-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2.5px;
+  z-index: 9999;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--silver-mid) 60%, var(--silver-shine) 100%);
+  transform-origin: left;
+  transition: width 0.1s linear;
+  pointer-events: none;
+  box-shadow: 0 0 10px var(--accent-glow), 0 0 20px rgba(200,200,216,0.15);
+}
 
 /* ── Component Primitives ──────────────────────────────────────────────────── */
 
@@ -309,11 +400,55 @@
   border-radius: var(--radius-lg);
   transition: background var(--duration) var(--ease),
               border-color var(--duration) var(--ease),
-              box-shadow var(--duration) var(--ease);
+              box-shadow var(--duration) var(--ease),
+              transform var(--duration) var(--ease);
 }
 .card:hover {
   background: var(--bg-card-hover);
   border-color: var(--border-mid);
+}
+
+/* Metallic card — silver border shimmer */
+.card-metallic {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid transparent;
+  background-clip: padding-box;
+  position: relative;
+  transition: transform var(--duration) var(--ease),
+              box-shadow var(--duration) var(--ease);
+}
+.card-metallic::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(80, 80, 95, 0.5) 0%,
+    rgba(200, 200, 216, 0.22) 35%,
+    rgba(242, 242, 250, 0.30) 50%,
+    rgba(160, 160, 176, 0.22) 65%,
+    rgba(60, 60, 72, 0.5) 100%
+  );
+  background-size: 200% 200%;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  transition: background-position 0.5s ease;
+}
+.card-metallic:hover::before {
+  animation: silverSweep 2s linear infinite;
+  background-size: 200% 200%;
+}
+.card-metallic:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4),
+              0 0 0 0.5px rgba(200, 200, 216, 0.15);
 }
 
 /* Accent card — orange left border */
@@ -520,6 +655,35 @@
   background-clip: text;
 }
 
+/* Silver / metallic gradient text */
+.text-gradient-silver {
+  background: linear-gradient(
+    135deg,
+    var(--silver-dim)   0%,
+    var(--silver-mid)   28%,
+    var(--silver-shine) 48%,
+    var(--silver-mid)   65%,
+    var(--silver-dim)   100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Amber-to-silver — for premium accent headings */
+.text-gradient-premium {
+  background: linear-gradient(
+    135deg,
+    #F97316 0%,
+    #FDBA74 40%,
+    #E4E4F0 65%,
+    #C8C8D8 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 .text-gradient-cool {
   background: linear-gradient(135deg, #60A5FA 0%, #93C5FD 100%);
   -webkit-background-clip: text;
@@ -532,6 +696,20 @@
   font-family: var(--font-mono);
   font-size: 0.85em;
   letter-spacing: 0;
+}
+
+/* Metallic divider line */
+.divider-metallic {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--silver-dim) 25%,
+    var(--silver-mid) 50%,
+    var(--silver-dim) 75%,
+    transparent 100%
+  );
+  border: none;
 }
 
 /* ── Scroll Animations Hook ────────────────────────────────────────────────── */
