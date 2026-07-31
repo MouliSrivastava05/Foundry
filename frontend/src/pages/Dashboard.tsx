@@ -546,15 +546,15 @@ export const Dashboard: React.FC = () => {
   const outputs = isDemo ? selectedProject?.outputs : realOutputs;
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-slate-950 text-slate-100 font-sans">
+    <div className="flex h-screen w-screen overflow-hidden font-sans" style={{ background: 'var(--bg-base)' }}>
       {/* Sidebar */}
-      <aside className="w-80 border-r border-slate-900 bg-slate-900/30 flex flex-col justify-between">
+      <aside className="w-80 flex flex-col justify-between" style={{ background: 'var(--bg-surface)', borderRight: '1px solid var(--border)' }}>
         <div>
           {/* Logo / Header */}
-          <div className="p-6 flex items-center justify-between border-b border-slate-900">
+          <div className="p-6 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)' }}>
             <div className="flex items-center gap-2">
-              <Sparkles className="h-6 w-6 text-purple-500 animate-pulse" />
-              <h1 className="text-xl font-bold tracking-tight text-white">Foundry</h1>
+              <Sparkles className="h-5 w-5 text-purple-500 animate-pulse" />
+              <h1 className="text-gradient-silver tracking-tight" style={{ fontWeight: 800, fontSize: 18, letterSpacing: '-0.04em' }}>Foundry</h1>
             </div>
             {isDemo ? (
               <span className="rounded-full bg-purple-500/10 border border-purple-500/30 px-2.5 py-0.5 text-xs font-semibold text-purple-400 flex items-center gap-1">
@@ -571,7 +571,7 @@ export const Dashboard: React.FC = () => {
           <div className="p-4">
             <button
               onClick={() => setShowCreateModal(true)}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-purple-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-purple-700 active:scale-95"
+              className="btn btn-primary" style={{ width: '100%', padding: '10px 16px' }}
             >
               <Plus className="h-4 w-4" /> New Project Blueprint
             </button>
@@ -661,7 +661,7 @@ export const Dashboard: React.FC = () => {
         </div>
 
         {/* User Footer info */}
-        <div className="p-4 border-t border-slate-900 bg-slate-950/40 flex items-center justify-between">
+        <div className="p-4 flex items-center justify-between" style={{ borderTop: '1px solid var(--border)' }}>
           <div className="overflow-hidden">
             <p className="text-sm font-semibold text-white truncate">{user?.name || 'User Account'}</p>
             <p className="text-xs text-slate-500 truncate">{user?.email || 'user@example.com'}</p>
@@ -686,11 +686,11 @@ export const Dashboard: React.FC = () => {
       </aside>
 
       {/* Main Panel */}
-      <main className="flex-1 flex flex-col overflow-hidden bg-slate-950">
+      <main className="flex-1 flex flex-col overflow-hidden" style={{ background: 'var(--bg-base)' }}>
         {selectedProject ? (
           <div className="flex-1 flex flex-col overflow-hidden">
             {/* Project Header */}
-            <header className="px-8 py-5 border-b border-slate-900 bg-slate-900/10 flex items-center justify-between">
+            <header className="px-8 py-5 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-surface)' }}>
               <div>
                 <h2 className="text-2xl font-bold text-white">{selectedProject.title}</h2>
                 <p className="text-sm text-slate-400">
