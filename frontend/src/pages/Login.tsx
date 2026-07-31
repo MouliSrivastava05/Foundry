@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { Zap, CheckCircle, ArrowRight } from 'lucide-react'
 import { useAuth } from '../store/AuthContext'
 
 export const Login: React.FC = () => {
@@ -32,85 +33,173 @@ export const Login: React.FC = () => {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4 py-12">
-      <div className="glass w-full max-w-md rounded-2xl p-8 shadow-2xl">
-        <div className="mb-8 text-center">
-          <h2 className="text-3xl font-extrabold tracking-tight text-white bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">
-            Foundry
+    <div style={{ minHeight: '100vh', display: 'flex' }}>
+      {/* ── Left Side: Product Showcase ─────────────────────────────────── */}
+      <div style={{
+        flex: 1,
+        background: 'var(--bg-surface)',
+        borderRight: '1px solid var(--border)',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        padding: '64px',
+        position: 'relative',
+        overflow: 'hidden'
+      }} className="hidden md:flex">
+        
+        {/* Abstract pattern */}
+        <div style={{
+          position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundImage: 'radial-gradient(circle at 20% 80%, rgba(249, 115, 22, 0.05) 0%, transparent 50%)',
+          pointerEvents: 'none'
+        }} />
+
+        <div style={{ maxWidth: 440, margin: '0 auto', zIndex: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 40 }}>
+            <div style={{ width: 28, height: 28, borderRadius: 8, background: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Zap size={14} color="#000" strokeWidth={2.5} />
+            </div>
+            <span className="text-gradient-silver" style={{ fontWeight: 800, fontSize: 18, letterSpacing: '-0.04em' }}>
+              Foundry
+            </span>
+          </div>
+
+          <h2 style={{ fontSize: 'clamp(28px, 3vw, 36px)', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1.15, marginBottom: 24 }}>
+            Sign in to your workspace
           </h2>
-          <p className="mt-2 text-sm text-slate-400">
-            Orchestrate multi-agent startup blueprints
+          <p style={{ fontSize: 15, color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: 40 }}>
+            Access your startup blueprints, orchestration pipelines, and live prototypes.
           </p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {[
+              'Resume interrupted agent pipelines',
+              'Download full PDF specs',
+              'Access live HTML/CSS UI previews',
+              'Manage your API keys securely'
+            ].map((feature, i) => (
+              <div key={i} className="animate-fade-up" style={{ display: 'flex', gap: 12, alignItems: 'center', animationDelay: `${i * 100}ms` }}>
+                <CheckCircle size={18} color="var(--accent)" strokeWidth={2.5} />
+                <span style={{ fontSize: 14, color: 'var(--text-primary)', fontWeight: 500 }}>{feature}</span>
+              </div>
+            ))}
+          </div>
         </div>
+      </div>
 
-        {error && (
-          <div className="mb-4 rounded-lg bg-red-500/10 border border-red-500/20 p-3 text-sm text-red-400">
-            {error}
+      {/* ── Right Side: Auth Form ───────────────────────────────────────── */}
+      <div style={{
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        padding: '32px',
+        background: 'var(--bg-base)'
+      }}>
+        <div style={{ width: '100%', maxWidth: 360, margin: '0 auto' }}>
+          
+          {/* Mobile Logo */}
+          <div className="md:hidden" style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 40, justifyContent: 'center' }}>
+            <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Zap size={16} color="#000" strokeWidth={2.5} />
+            </div>
+            <span className="text-gradient-silver" style={{ fontWeight: 800, fontSize: 20, letterSpacing: '-0.04em' }}>
+              Foundry
+            </span>
           </div>
-        )}
 
-        <form className="space-y-6" onSubmit={handleSubmit}>
-          <div>
-            <label className="block text-sm font-medium text-slate-300">
-              Email Address
-            </label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 block w-full rounded-lg border border-slate-800 bg-slate-900/50 px-4 py-2 text-white placeholder-slate-500 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
-              placeholder="you@example.com"
-            />
+          <div style={{ marginBottom: 32, textAlign: 'center' }}>
+            <h1 style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 8 }}>Welcome back</h1>
+            <p style={{ fontSize: 14, color: 'var(--text-secondary)' }}>Enter your credentials to continue</p>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-300">
-              Password
-            </label>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full rounded-lg border border-slate-800 bg-slate-900/50 px-4 py-2 text-white placeholder-slate-500 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
-              placeholder="••••••••"
-            />
+          {error && (
+            <div style={{
+              background: 'rgba(239, 68, 68, 0.1)',
+              border: '1px solid rgba(239, 68, 68, 0.2)',
+              color: '#EF4444',
+              padding: '12px 16px',
+              borderRadius: 'var(--radius)',
+              fontSize: 13,
+              fontWeight: 500,
+              marginBottom: 24
+            }}>
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            <div>
+              <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 8 }}>
+                Email address
+              </label>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="input"
+                placeholder="you@company.com"
+                style={{ background: 'var(--bg-surface)' }}
+              />
+            </div>
+
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>
+                  Password
+                </label>
+                <a href="#" style={{ fontSize: 12, color: 'var(--text-secondary)', fontWeight: 500 }}>
+                  Forgot?
+                </a>
+              </div>
+              <input
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="input"
+                placeholder="••••••••"
+                style={{ background: 'var(--bg-surface)' }}
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn btn-primary"
+              style={{ width: '100%', marginTop: 8, padding: '12px', fontSize: 14 }}
+            >
+              {loading ? 'Signing in...' : 'Sign in'}
+            </button>
+          </form>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '24px 0' }}>
+            <hr className="divider-metallic" style={{ flex: 1 }} />
+            <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Or continue with
+            </span>
+            <hr className="divider-metallic" style={{ flex: 1 }} />
           </div>
 
           <button
-            type="submit"
-            disabled={loading}
-            className="flex w-full justify-center rounded-lg bg-purple-600 px-4 py-2 text-sm font-semibold text-white transition duration-200 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:bg-purple-800 disabled:opacity-50"
+            onClick={handleDemo}
+            className="btn btn-secondary"
+            style={{ width: '100%', padding: '12px', fontSize: 14 }}
           >
-            {loading ? 'Signing In...' : 'Sign In'}
+            Try Demo Mode
           </button>
-        </form>
 
-        <div className="relative my-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-slate-800"></div>
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-slate-950 px-2 text-slate-500">Or</span>
-          </div>
+          <p style={{ marginTop: 32, textAlign: 'center', fontSize: 13, color: 'var(--text-secondary)' }}>
+            Don't have an account?{' '}
+            <Link to="/signup" style={{ color: 'var(--text-primary)', fontWeight: 600 }}>
+              Sign up <ArrowRight size={12} style={{ display: 'inline', marginBottom: 2 }} />
+            </Link>
+          </p>
         </div>
-
-        <button
-          onClick={handleDemo}
-          className="flex w-full justify-center rounded-lg border border-purple-500/30 bg-purple-500/10 px-4 py-2 text-sm font-semibold text-purple-300 transition duration-200 hover:bg-purple-500/20 focus:outline-none"
-        >
-          Try Demo Mode (Instant View)
-        </button>
-
-        <p className="mt-6 text-center text-xs text-slate-400">
-          New to Foundry?{' '}
-          <Link to="/signup" className="font-semibold text-purple-400 hover:text-purple-300">
-            Create an account
-          </Link>
-        </p>
       </div>
     </div>
   )
 }
+
 export default Login
