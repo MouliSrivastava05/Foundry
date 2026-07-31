@@ -63,7 +63,7 @@ const getStatusBadge = (status: string) => {
 
 const TabHeader = ({ title, description, icon: Icon }: { title: string, description: string, icon: any }) => (
   <div className="mb-6 bg-slate-900/40 p-4 rounded-xl border border-slate-800 flex items-start gap-4">
-    <div className="p-2.5 bg-purple-500/10 rounded-lg text-purple-400 mt-0.5">
+    <div className="p-2.5 bg-amber-500/10 rounded-lg text-amber-400 mt-0.5">
       <Icon className="h-5 w-5" />
     </div>
     <div>
@@ -553,11 +553,11 @@ export const Dashboard: React.FC = () => {
           {/* Logo / Header */}
           <div className="p-6 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)' }}>
             <div className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-purple-500 animate-pulse" />
+              <Sparkles className="h-5 w-5 text-amber-500 animate-pulse" />
               <h1 className="text-gradient-silver tracking-tight" style={{ fontWeight: 800, fontSize: 18, letterSpacing: '-0.04em' }}>Foundry</h1>
             </div>
             {isDemo ? (
-              <span className="rounded-full bg-purple-500/10 border border-purple-500/30 px-2.5 py-0.5 text-xs font-semibold text-purple-400 flex items-center gap-1">
+              <span className="rounded-full bg-amber-500/10 border border-amber-500/30 px-2.5 py-0.5 text-xs font-semibold text-amber-400 flex items-center gap-1">
                 Demo Mode
               </span>
             ) : (
@@ -591,7 +591,7 @@ export const Dashboard: React.FC = () => {
                     onClick={() => handleSelectProject(p)}
                     className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition flex items-start gap-3 ${
                       selectedProject?.id === p.id 
-                        ? 'bg-purple-500/10 border border-purple-500/20 text-purple-300' 
+                        ? 'bg-amber-500/10 border border-amber-500/20 text-amber-300' 
                         : 'text-slate-400 hover:bg-slate-900/50 hover:text-slate-200'
                     }`}
                   >
@@ -610,7 +610,7 @@ export const Dashboard: React.FC = () => {
                               if (e.key === 'Enter') handleRenameProject(e, p.id)
                               if (e.key === 'Escape') setEditingProjectId(null)
                             }}
-                            className="bg-slate-800 text-slate-200 text-sm px-2 py-0.5 rounded border border-slate-700 outline-none w-full focus:border-purple-500"
+                            className="bg-slate-800 text-slate-200 text-sm px-2 py-0.5 rounded border border-slate-700 outline-none w-full focus:border-amber-500"
                             autoFocus
                           />
                           <button onClick={(e) => handleRenameProject(e, p.id)} className="p-1 text-emerald-400 hover:bg-emerald-400/10 rounded">
@@ -694,18 +694,18 @@ export const Dashboard: React.FC = () => {
               <div>
                 <h2 className="text-2xl font-bold text-white">{selectedProject.title}</h2>
                 <p className="text-sm text-slate-400">
-                  <span className="font-semibold text-purple-400">Industry:</span> {selectedProject.industry || 'General'} 
+                  <span className="font-semibold text-amber-400">Industry:</span> {selectedProject.industry || 'General'} 
                   <span className="mx-2 text-slate-700">|</span> 
-                  <span className="font-semibold text-purple-400">Version:</span> v{selectedProject.version}
+                  <span className="font-semibold text-amber-400">Version:</span> v{selectedProject.version}
                 </p>
               </div>
 
               {pipelineStep === -1 && (
                 <button
                   onClick={runPipeline}
-                  className="flex items-center gap-2 rounded-xl bg-purple-600/10 border border-purple-500/40 px-4 py-2 text-sm font-semibold text-purple-300 transition hover:bg-purple-600/25 active:scale-95"
+                  className="flex items-center gap-2 rounded-xl bg-amber-600/10 border border-amber-500/40 px-4 py-2 text-sm font-semibold text-amber-300 transition hover:bg-amber-600/25 active:scale-95"
                 >
-                  <Play className="h-4 w-4 fill-purple-300" /> Run AI Strategist Workflow
+                  <Play className="h-4 w-4 fill-amber-300" /> Run AI Strategist Workflow
                 </button>
               )}
               {pipelineStep === 5 && (
@@ -731,7 +731,7 @@ export const Dashboard: React.FC = () => {
                     {pipelineStep === -2 ? (
                       <div className="h-12 w-12 rounded-xl bg-red-500/10 border border-red-500/30 text-red-500 mx-auto flex items-center justify-center font-bold text-2xl">⚠️</div>
                     ) : (
-                      <Activity className="h-10 w-10 text-purple-500 animate-spin mx-auto" />
+                      <Activity className="h-10 w-10 text-amber-500 animate-spin mx-auto" />
                     )}
                     <h3 className="text-xl font-bold text-white">
                       {pipelineStep === -2 ? "Pipeline Execution Failed" : "Orchestrating AI Workflow Agents"}
@@ -752,7 +752,7 @@ export const Dashboard: React.FC = () => {
                       </div>
                       <div className="w-full h-2.5 bg-slate-900 rounded-full overflow-hidden">
                         <div 
-                          className="h-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-500" 
+                          className="h-full bg-gradient-to-r from-amber-500 to-orange-500 transition-all duration-500" 
                           style={{ width: `${pipelineProgress}%` }}
                         ></div>
                       </div>
@@ -760,7 +760,7 @@ export const Dashboard: React.FC = () => {
                   )}
 
                   {/* High Fidelity Logs Console */}
-                  <div className="rounded-xl border border-slate-900 bg-black/50 p-5 font-mono text-xs text-purple-300 space-y-1.5 shadow-inner max-h-72 overflow-y-auto">
+                  <div className="rounded-xl border border-slate-900 bg-black/50 p-5 font-mono text-xs text-amber-300 space-y-1.5 shadow-inner max-h-72 overflow-y-auto">
                     {pipelineLogs.map((log, i) => (
                       <p key={i} className={
                         log.startsWith('✅') ? 'text-emerald-400 font-semibold' : 
@@ -773,10 +773,10 @@ export const Dashboard: React.FC = () => {
                 /* WORKFLOW RESULTS DISPLAY */
                 <div className="space-y-6 animate-fadeIn">
                   {/* Info panel */}
-                  <div className="rounded-xl border border-purple-500/10 bg-purple-500/5 p-4 flex items-start gap-3">
-                    <Info className="h-5 w-5 text-purple-400 shrink-0 mt-0.5" />
+                  <div className="rounded-xl border border-amber-500/10 bg-amber-500/5 p-4 flex items-start gap-3">
+                    <Info className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-sm font-semibold text-purple-300">
+                      <p className="text-sm font-semibold text-amber-300">
                         {isDemo ? "Phase 1 Blueprint Generated" : "Orchestrated Blueprint Generated"}
                       </p>
                       <p className="text-xs text-slate-400 mt-1">
@@ -795,7 +795,7 @@ export const Dashboard: React.FC = () => {
                           onClick={() => setActiveTab('research')}
                           className={`pb-3 px-2 text-sm font-semibold border-b-2 transition flex items-center gap-2 ${
                             activeTab === 'research' 
-                              ? 'border-purple-500 text-purple-400' 
+                              ? 'border-amber-500 text-amber-400' 
                               : 'border-transparent text-slate-500 hover:text-slate-300'
                           }`}
                         >
@@ -807,7 +807,7 @@ export const Dashboard: React.FC = () => {
                         onClick={() => setActiveTab('prd')}
                         className={`pb-3 px-2 text-sm font-semibold border-b-2 transition flex items-center gap-2 ${
                           activeTab === 'prd' 
-                            ? 'border-purple-500 text-purple-400' 
+                            ? 'border-amber-500 text-amber-400' 
                             : 'border-transparent text-slate-500 hover:text-slate-300'
                         }`}
                       >
@@ -818,7 +818,7 @@ export const Dashboard: React.FC = () => {
                         onClick={() => setActiveTab('personas')}
                         className={`pb-3 px-2 text-sm font-semibold border-b-2 transition flex items-center gap-2 ${
                           activeTab === 'personas' 
-                            ? 'border-purple-500 text-purple-400' 
+                            ? 'border-amber-500 text-amber-400' 
                             : 'border-transparent text-slate-500 hover:text-slate-300'
                         }`}
                       >
@@ -829,7 +829,7 @@ export const Dashboard: React.FC = () => {
                         onClick={() => setActiveTab('stories')}
                         className={`pb-3 px-2 text-sm font-semibold border-b-2 transition flex items-center gap-2 ${
                           activeTab === 'stories' 
-                            ? 'border-purple-500 text-purple-400' 
+                            ? 'border-amber-500 text-amber-400' 
                             : 'border-transparent text-slate-500 hover:text-slate-300'
                         }`}
                       >
@@ -840,7 +840,7 @@ export const Dashboard: React.FC = () => {
                         onClick={() => setActiveTab('prioritization')}
                         className={`pb-3 px-2 text-sm font-semibold border-b-2 transition flex items-center gap-2 ${
                           activeTab === 'prioritization' 
-                            ? 'border-purple-500 text-purple-400' 
+                            ? 'border-amber-500 text-amber-400' 
                             : 'border-transparent text-slate-500 hover:text-slate-300'
                         }`}
                       >
@@ -853,7 +853,7 @@ export const Dashboard: React.FC = () => {
                             onClick={() => setActiveTab('architecture')}
                             className={`pb-3 px-2 text-sm font-semibold border-b-2 transition flex items-center gap-2 ${
                               activeTab === 'architecture' 
-                                ? 'border-purple-500 text-purple-400' 
+                                ? 'border-amber-500 text-amber-400' 
                                 : 'border-transparent text-slate-500 hover:text-slate-300'
                             }`}
                           >
@@ -864,7 +864,7 @@ export const Dashboard: React.FC = () => {
                             onClick={() => setActiveTab('roadmap')}
                             className={`pb-3 px-2 text-sm font-semibold border-b-2 transition flex items-center gap-2 ${
                               activeTab === 'roadmap' 
-                                ? 'border-purple-500 text-purple-400' 
+                                ? 'border-amber-500 text-amber-400' 
                                 : 'border-transparent text-slate-500 hover:text-slate-300'
                             }`}
                           >
@@ -875,7 +875,7 @@ export const Dashboard: React.FC = () => {
                             onClick={() => setActiveTab('cost')}
                             className={`pb-3 px-2 text-sm font-semibold border-b-2 transition flex items-center gap-2 ${
                               activeTab === 'cost' 
-                                ? 'border-purple-500 text-purple-400' 
+                                ? 'border-amber-500 text-amber-400' 
                                 : 'border-transparent text-slate-500 hover:text-slate-300'
                             }`}
                           >
@@ -886,7 +886,7 @@ export const Dashboard: React.FC = () => {
                             onClick={() => setActiveTab('scaffolding')}
                             className={`pb-3 px-2 text-sm font-semibold border-b-2 transition flex items-center gap-2 ${
                               activeTab === 'scaffolding' 
-                                ? 'border-purple-500 text-purple-400' 
+                                ? 'border-amber-500 text-amber-400' 
                                 : 'border-transparent text-slate-500 hover:text-slate-300'
                             }`}
                           >
@@ -897,7 +897,7 @@ export const Dashboard: React.FC = () => {
                             onClick={() => setActiveTab('ui')}
                             className={`pb-3 px-2 text-sm font-semibold border-b-2 transition flex items-center gap-2 ${
                               activeTab === 'ui' 
-                                ? 'border-purple-500 text-purple-400' 
+                                ? 'border-amber-500 text-amber-400' 
                                 : 'border-transparent text-slate-500 hover:text-slate-300'
                             }`}
                           >
@@ -950,12 +950,12 @@ export const Dashboard: React.FC = () => {
                             {outputs.research.competitors?.map((comp: any, idx: number) => (
                               <div key={idx} className="card-metallic rounded-xl p-4 border border-slate-900 space-y-2">
                                 <div className="flex justify-between items-center">
-                                  <h5 className="font-semibold text-purple-300">{comp.name}</h5>
+                                  <h5 className="font-semibold text-amber-300">{comp.name}</h5>
                                   <a 
                                     href={comp.url} 
                                     target="_blank" 
                                     rel="noopener noreferrer" 
-                                    className="text-[10px] text-purple-400 hover:text-purple-300 underline font-mono"
+                                    className="text-[10px] text-amber-400 hover:text-amber-300 underline font-mono"
                                   >
                                     Visit Website ↗
                                   </a>
@@ -968,7 +968,7 @@ export const Dashboard: React.FC = () => {
 
                         <div className="space-y-2">
                           <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Gaps & Opportunities</h4>
-                          <div className="rounded-xl border border-purple-500/10 bg-purple-500/5 p-4 text-xs text-purple-300 leading-relaxed">
+                          <div className="rounded-xl border border-amber-500/10 bg-amber-500/5 p-4 text-xs text-amber-300 leading-relaxed">
                             {outputs.research.opportunities}
                           </div>
                         </div>
@@ -991,7 +991,7 @@ export const Dashboard: React.FC = () => {
                           <div className="grid md:grid-cols-2 gap-4">
                             {outputs.prd.features?.map((feat: any, idx: number) => (
                               <div key={idx} className="card-metallic rounded-xl p-4 space-y-2">
-                                <h5 className="font-semibold text-purple-300">{feat.name}</h5>
+                                <h5 className="font-semibold text-amber-300">{feat.name}</h5>
                                 <p className="text-xs text-slate-400 leading-relaxed">{feat.description}</p>
                               </div>
                             ))}
@@ -1011,12 +1011,12 @@ export const Dashboard: React.FC = () => {
                         {outputs.personas.map((pers: any, idx: number) => (
                           <div key={idx} className="card-metallic rounded-xl p-6 space-y-4">
                             <div className="flex items-center gap-3">
-                              <div className="h-10 w-10 rounded-full bg-purple-600/10 border border-purple-500/20 flex items-center justify-center text-purple-400 font-bold">
+                              <div className="h-10 w-10 rounded-full bg-amber-600/10 border border-amber-500/20 flex items-center justify-center text-amber-400 font-bold">
                                 {pers.name ? pers.name[0] : 'U'}
                               </div>
                               <div>
                                 <h4 className="font-bold text-white">{pers.name}</h4>
-                                <p className="text-xs text-purple-400">{pers.role}</p>
+                                <p className="text-xs text-amber-400">{pers.role}</p>
                               </div>
                             </div>
                             <div className="space-y-2 text-xs">
@@ -1048,7 +1048,7 @@ export const Dashboard: React.FC = () => {
                           <tbody className="divide-y divide-slate-900">
                             {outputs.userStories.map((story: any) => (
                               <tr key={story.id} className="hover:bg-slate-900/20">
-                                <td className="px-6 py-4 font-mono text-purple-400 font-semibold">{story.id}</td>
+                                <td className="px-6 py-4 font-mono text-amber-400 font-semibold">{story.id}</td>
                                 <td className="px-6 py-4 font-semibold text-white">{story.title}</td>
                                 <td className="px-6 py-4 text-xs leading-relaxed">{story.description}</td>
                               </tr>
@@ -1133,7 +1133,7 @@ export const Dashboard: React.FC = () => {
                           <div className="grid md:grid-cols-3 gap-4">
                             {outputs.architecture.tables?.map((table: any, idx: number) => (
                               <div key={idx} className="card-metallic rounded-xl p-4 border border-slate-900 space-y-3">
-                                <h5 className="font-mono text-xs font-bold text-purple-300 border-b border-slate-900 pb-2">📋 {table.name}</h5>
+                                <h5 className="font-mono text-xs font-bold text-amber-300 border-b border-slate-900 pb-2">📋 {table.name}</h5>
                                 <ul className="space-y-1.5 font-mono text-[10px] text-slate-400">
                                   {table.columns?.map((col: string, cIdx: number) => (
                                     <li key={cIdx} className="truncate">▪ {col}</li>
@@ -1186,8 +1186,8 @@ export const Dashboard: React.FC = () => {
                         <div className="grid md:grid-cols-4 gap-4 animate-fadeIn">
                         {[
                           { name: 'Sprint 1', key: 'sprint_1', theme: 'border-t-blue-500/50', label: 'Foundation & DB' },
-                          { name: 'Sprint 2', key: 'sprint_2', theme: 'border-t-purple-500/50', label: 'Core Features' },
-                          { name: 'Sprint 3', key: 'sprint_3', theme: 'border-t-pink-500/50', label: 'Advanced Tools' },
+                          { name: 'Sprint 2', key: 'sprint_2', theme: 'border-t-amber-500/50', label: 'Core Features' },
+                          { name: 'Sprint 3', key: 'sprint_3', theme: 'border-t-orange-500/50', label: 'Advanced Tools' },
                           { name: 'Sprint 4', key: 'sprint_4', theme: 'border-t-emerald-500/50', label: 'Testing & Launch' }
                         ].map((sprint, idx) => (
                           <div key={idx} className={`glass rounded-xl p-4 border-t-2 ${sprint.theme} space-y-3`}>
@@ -1201,7 +1201,7 @@ export const Dashboard: React.FC = () => {
                                 return (
                                   <div key={storyId} className="bg-slate-900/30 rounded-lg p-2 border border-slate-900/60 space-y-1">
                                     <div className="flex justify-between items-center">
-                                      <span className="text-[9px] font-mono font-bold text-purple-400">{storyId}</span>
+                                      <span className="text-[9px] font-mono font-bold text-amber-400">{storyId}</span>
                                     </div>
                                     {matchingStory && (
                                       <p className="text-[10px] text-slate-400 leading-normal line-clamp-2">{matchingStory.title}</p>
@@ -1227,8 +1227,8 @@ export const Dashboard: React.FC = () => {
                         <div className="grid md:grid-cols-3 gap-6">
                           {[
                             { users: '100 Active Users', key: 'scale_100', color: 'text-blue-400' },
-                            { users: '1,000 Active Users', key: 'scale_1k', color: 'text-purple-400' },
-                            { users: '10,000 Active Users', key: 'scale_10k', color: 'text-pink-400' }
+                            { users: '1,000 Active Users', key: 'scale_1k', color: 'text-amber-400' },
+                            { users: '10,000 Active Users', key: 'scale_10k', color: 'text-orange-400' }
                           ].map((tier, idx) => (
                             <div key={idx} className="card-metallic rounded-xl p-5 border border-slate-900 flex flex-col justify-between space-y-4">
                               <div className="space-y-1">
@@ -1248,9 +1248,9 @@ export const Dashboard: React.FC = () => {
                                   <span className="text-slate-400">CDN / Bandwidth:</span>
                                   <span className="font-mono text-white">{outputs.costEstimate.cdn_cost[tier.key]}</span>
                                 </div>
-                                <div className="flex justify-between py-2 pt-3 font-semibold border-t border-purple-500/20">
-                                  <span className="text-purple-300">Total Projection:</span>
-                                  <span className="font-mono text-purple-400">{outputs.costEstimate.total_monthly[tier.key]}</span>
+                                <div className="flex justify-between py-2 pt-3 font-semibold border-t border-amber-500/20">
+                                  <span className="text-amber-300">Total Projection:</span>
+                                  <span className="font-mono text-amber-400">{outputs.costEstimate.total_monthly[tier.key]}</span>
                                 </div>
                               </div>
                             </div>
@@ -1354,7 +1354,7 @@ export const Dashboard: React.FC = () => {
         ) : (
           /* NO PROJECT SELECTED */
           <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-4">
-            <Sparkles className="h-12 w-12 text-purple-500 animate-pulse" />
+            <Sparkles className="h-12 w-12 text-amber-500 animate-pulse" />
             <h2 className="text-2xl font-bold text-white">Welcome to your Foundry Workspace</h2>
             <p className="text-sm text-slate-400 max-w-md leading-relaxed">
               Create a new project blueprint description, or choose a pre-seeded model in the sidebar to review the orchestrated AI agent pipeline workflow.
@@ -1385,7 +1385,7 @@ export const Dashboard: React.FC = () => {
                   required
                   value={newTitle}
                   onChange={e => setNewTitle(e.target.value)}
-                  className="mt-1 block w-full rounded-lg border border-slate-800 bg-slate-900/50 px-4 py-2 text-white placeholder-slate-500 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
+                  className="mt-1 block w-full rounded-lg border border-slate-800 bg-slate-900/50 px-4 py-2 text-white placeholder-slate-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
                   placeholder="e.g. EcoRoute"
                 />
               </div>
@@ -1396,7 +1396,7 @@ export const Dashboard: React.FC = () => {
                   type="text"
                   value={newIndustry}
                   onChange={e => setNewIndustry(e.target.value)}
-                  className="mt-1 block w-full rounded-lg border border-slate-800 bg-slate-900/50 px-4 py-2 text-white placeholder-slate-500 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
+                  className="mt-1 block w-full rounded-lg border border-slate-800 bg-slate-900/50 px-4 py-2 text-white placeholder-slate-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
                   placeholder="e.g. Healthcare, Fintech, SaaS"
                 />
               </div>
@@ -1408,7 +1408,7 @@ export const Dashboard: React.FC = () => {
                   rows={4}
                   value={newIdea}
                   onChange={e => setNewIdea(e.target.value)}
-                  className="mt-1 block w-full rounded-lg border border-slate-800 bg-slate-900/50 px-4 py-2 text-white placeholder-slate-500 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
+                  className="mt-1 block w-full rounded-lg border border-slate-800 bg-slate-900/50 px-4 py-2 text-white placeholder-slate-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
                   placeholder="Describe your startup product, core functionality, and value proposition..."
                 />
               </div>
@@ -1423,7 +1423,7 @@ export const Dashboard: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="rounded-lg bg-purple-600 px-4 py-2 text-sm font-semibold text-white hover:bg-purple-700 transition"
+                  className="rounded-lg bg-amber-600 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-700 transition"
                 >
                   Create Blueprint
                 </button>

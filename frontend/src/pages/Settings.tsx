@@ -71,7 +71,7 @@ export const Settings: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-purple-500/30">
+    <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-amber-500/30">
       <div className="max-w-4xl mx-auto py-12 px-6">
         
         {/* Header */}
@@ -97,7 +97,7 @@ export const Settings: React.FC = () => {
               onClick={() => setActiveTab('profile')}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium text-sm ${
                 activeTab === 'profile' 
-                ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20' 
+                ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' 
                 : 'text-slate-400 hover:bg-slate-900 hover:text-slate-200 border border-transparent'
               }`}
             >
@@ -108,7 +108,7 @@ export const Settings: React.FC = () => {
               onClick={() => setActiveTab('security')}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium text-sm ${
                 activeTab === 'security' 
-                ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20' 
+                ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' 
                 : 'text-slate-400 hover:bg-slate-900 hover:text-slate-200 border border-transparent'
               }`}
             >
@@ -133,7 +133,7 @@ export const Settings: React.FC = () => {
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
                         placeholder="John Doe"
                         required
                       />
@@ -200,7 +200,7 @@ export const Settings: React.FC = () => {
                   <button
                     type="submit"
                     disabled={profileSaving}
-                    className="flex items-center gap-2 px-6 py-2.5 bg-purple-600 hover:bg-purple-500 text-white rounded-xl font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center gap-2 px-6 py-2.5 bg-amber-600 hover:bg-amber-500 text-white rounded-xl font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Save className="w-4 h-4" />
                     {profileSaving ? 'Saving...' : 'Save Changes'}
@@ -222,7 +222,7 @@ export const Settings: React.FC = () => {
                         type="password"
                         value={currentPassword}
                         onChange={(e) => setCurrentPassword(e.target.value)}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
                         required
                       />
                     </div>
@@ -232,7 +232,7 @@ export const Settings: React.FC = () => {
                         type="password"
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
                         required
                         minLength={6}
                       />
@@ -243,7 +243,7 @@ export const Settings: React.FC = () => {
                         type="password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
                         required
                         minLength={6}
                       />
