@@ -948,7 +948,7 @@ export const Dashboard: React.FC = () => {
                           <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Identified Competitors</h4>
                           <div className="grid md:grid-cols-2 gap-4">
                             {outputs.research.competitors?.map((comp: any, idx: number) => (
-                              <div key={idx} className="glass rounded-xl p-4 border border-slate-900 space-y-2">
+                              <div key={idx} className="card-metallic rounded-xl p-4 border border-slate-900 space-y-2">
                                 <div className="flex justify-between items-center">
                                   <h5 className="font-semibold text-purple-300">{comp.name}</h5>
                                   <a 
@@ -990,7 +990,7 @@ export const Dashboard: React.FC = () => {
                           <h4 className="text-sm font-bold text-slate-400 uppercase tracking-wider">Features Roadmap</h4>
                           <div className="grid md:grid-cols-2 gap-4">
                             {outputs.prd.features?.map((feat: any, idx: number) => (
-                              <div key={idx} className="glass rounded-xl p-4 space-y-2">
+                              <div key={idx} className="card-metallic rounded-xl p-4 space-y-2">
                                 <h5 className="font-semibold text-purple-300">{feat.name}</h5>
                                 <p className="text-xs text-slate-400 leading-relaxed">{feat.description}</p>
                               </div>
@@ -1009,7 +1009,7 @@ export const Dashboard: React.FC = () => {
                         />
                         <div className="grid md:grid-cols-2 gap-6">
                         {outputs.personas.map((pers: any, idx: number) => (
-                          <div key={idx} className="glass rounded-xl p-6 space-y-4">
+                          <div key={idx} className="card-metallic rounded-xl p-6 space-y-4">
                             <div className="flex items-center gap-3">
                               <div className="h-10 w-10 rounded-full bg-purple-600/10 border border-purple-500/20 flex items-center justify-center text-purple-400 font-bold">
                                 {pers.name ? pers.name[0] : 'U'}
@@ -1036,7 +1036,7 @@ export const Dashboard: React.FC = () => {
                           description="User Stories break down broad features into bite-sized actionable items written from the user's perspective, making it easy for developers to understand the 'why' behind a task."
                           icon={ListTodo}
                         />
-                        <div className="glass rounded-xl overflow-hidden">
+                        <div className="card-metallic rounded-xl overflow-hidden">
                         <table className="w-full border-collapse text-left text-sm text-slate-400">
                           <thead className="bg-slate-900/50 text-xs font-semibold text-white uppercase border-b border-slate-900">
                             <tr>
@@ -1067,7 +1067,7 @@ export const Dashboard: React.FC = () => {
                           icon={CheckCircle2}
                         />
                         <div className="grid md:grid-cols-3 gap-6 max-w-4xl">
-                        <div className="glass rounded-xl p-5 border-t-2 border-t-red-500/50">
+                        <div className="card-metallic rounded-xl p-5 border-t-2 border-t-red-500/50">
                           <h4 className="font-bold text-white mb-4 text-sm flex items-center gap-2">
                             <span className="h-2 w-2 rounded-full bg-red-500"></span> Must Have
                           </h4>
@@ -1084,7 +1084,7 @@ export const Dashboard: React.FC = () => {
                           </div>
                         </div>
 
-                        <div className="glass rounded-xl p-5 border-t-2 border-t-yellow-500/50">
+                        <div className="card-metallic rounded-xl p-5 border-t-2 border-t-yellow-500/50">
                           <h4 className="font-bold text-white mb-4 text-sm flex items-center gap-2">
                             <span className="h-2 w-2 rounded-full bg-yellow-500"></span> Should Have
                           </h4>
@@ -1101,7 +1101,7 @@ export const Dashboard: React.FC = () => {
                           </div>
                         </div>
 
-                        <div className="glass rounded-xl p-5 border-t-2 border-t-emerald-500/50">
+                        <div className="card-metallic rounded-xl p-5 border-t-2 border-t-emerald-500/50">
                           <h4 className="font-bold text-white mb-4 text-sm flex items-center gap-2">
                             <span className="h-2 w-2 rounded-full bg-emerald-500"></span> Could Have
                           </h4>
@@ -1132,7 +1132,7 @@ export const Dashboard: React.FC = () => {
                           <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Database Schema Design</h4>
                           <div className="grid md:grid-cols-3 gap-4">
                             {outputs.architecture.tables?.map((table: any, idx: number) => (
-                              <div key={idx} className="glass rounded-xl p-4 border border-slate-900 space-y-3">
+                              <div key={idx} className="card-metallic rounded-xl p-4 border border-slate-900 space-y-3">
                                 <h5 className="font-mono text-xs font-bold text-purple-300 border-b border-slate-900 pb-2">📋 {table.name}</h5>
                                 <ul className="space-y-1.5 font-mono text-[10px] text-slate-400">
                                   {table.columns?.map((col: string, cIdx: number) => (
@@ -1146,7 +1146,7 @@ export const Dashboard: React.FC = () => {
 
                         <div className="space-y-3">
                           <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">REST API Routes</h4>
-                          <div className="glass rounded-xl overflow-hidden">
+                          <div className="card-metallic rounded-xl overflow-hidden">
                             <table className="w-full border-collapse text-left text-xs text-slate-400">
                               <thead className="bg-slate-900/50 text-[10px] font-semibold text-white uppercase border-b border-slate-900">
                                 <tr>
@@ -1230,7 +1230,7 @@ export const Dashboard: React.FC = () => {
                             { users: '1,000 Active Users', key: 'scale_1k', color: 'text-purple-400' },
                             { users: '10,000 Active Users', key: 'scale_10k', color: 'text-pink-400' }
                           ].map((tier, idx) => (
-                            <div key={idx} className="glass rounded-xl p-5 border border-slate-900 flex flex-col justify-between space-y-4">
+                            <div key={idx} className="card-metallic rounded-xl p-5 border border-slate-900 flex flex-col justify-between space-y-4">
                               <div className="space-y-1">
                                 <h5 className={`font-bold text-sm ${tier.color}`}>{tier.users}</h5>
                                 <p className="text-[9px] text-slate-500 uppercase tracking-wider">Estimated Monthly Budget</p>
@@ -1275,7 +1275,7 @@ export const Dashboard: React.FC = () => {
 
                         <div className="space-y-3">
                           <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Onboarding Setup Instructions</h4>
-                          <div className="glass rounded-xl p-5 text-xs text-slate-400 leading-relaxed space-y-2 whitespace-pre-wrap">
+                          <div className="card-metallic rounded-xl p-5 text-xs text-slate-400 leading-relaxed space-y-2 whitespace-pre-wrap">
                             {outputs.scaffolding.instructions}
                           </div>
                         </div>
@@ -1366,7 +1366,7 @@ export const Dashboard: React.FC = () => {
       {/* CREATE BLUEPRINT MODAL */}
       {showCreateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="glass w-full max-w-lg rounded-2xl p-8 shadow-2xl space-y-6">
+          <div className="card-metallic w-full max-w-lg rounded-2xl p-8 shadow-2xl space-y-6">
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-bold text-white">Create Startup Blueprint</h3>
               <button 
@@ -1436,7 +1436,7 @@ export const Dashboard: React.FC = () => {
       {/* RE-RUN PIPELINE MODAL */}
       {showRerunModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="glass w-full max-w-lg rounded-2xl p-8 shadow-2xl space-y-6">
+          <div className="card-metallic w-full max-w-lg rounded-2xl p-8 shadow-2xl space-y-6">
             <div className="flex justify-between items-center">
               <div>
                 <h3 className="text-lg font-bold text-white">Re-run AI Strategist</h3>
