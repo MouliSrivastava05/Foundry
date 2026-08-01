@@ -173,6 +173,27 @@
   to   { opacity: 1; }
 }
 
+/* Pipeline agent spotlight — slides in from right with a subtle vertical lift */
+@keyframes pipelineSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(18px) translateY(6px) scale(0.98);
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* Scroll hint line pulse */
+@keyframes scrollHintPulse {
+  0%, 100% { opacity: 0.3; transform: scaleY(1); }
+  50% { opacity: 0.8; transform: scaleY(1.15); }
+}
+
+
 /* Reveal — text sliding up from a clip mask (the "cool" one) */
 @keyframes reveal {
   from {
@@ -262,59 +283,6 @@
 
 /* Scroll progress fill */
 @keyframes none {} /* placeholder */
-
-/* ── 3D Animation Keyframes ─────────────────────────────────────────────────── */
-
-/* Float 3D — hero card stack bobbing */
-@keyframes float3d {
-  0%, 100% {
-    transform: rotateX(12deg) rotateY(-18deg) translateY(0px);
-  }
-  33% {
-    transform: rotateX(10deg) rotateY(-14deg) translateY(-14px);
-  }
-  66% {
-    transform: rotateX(14deg) rotateY(-20deg) translateY(-6px);
-  }
-}
-
-/* Float 3D — slightly offset phase for stacked cards */
-@keyframes float3d-2 {
-  0%, 100% {
-    transform: rotateX(12deg) rotateY(-18deg) translateY(0px);
-  }
-  33% {
-    transform: rotateX(11deg) rotateY(-16deg) translateY(-10px);
-  }
-  66% {
-    transform: rotateX(13deg) rotateY(-19deg) translateY(-4px);
-  }
-}
-
-/* Flip digit — 3D number flip for stats */
-@keyframes flipIn {
-  0% {
-    transform: rotateX(-90deg) translateY(12px);
-    opacity: 0;
-  }
-  100% {
-    transform: rotateX(0deg) translateY(0);
-    opacity: 1;
-  }
-}
-
-/* Rotate Y — slow self-rotation for accent objects */
-@keyframes orbitY {
-  from { transform: rotateY(0deg); }
-  to   { transform: rotateY(360deg); }
-}
-
-/* Depth pulse — subtle Z-axis breathing */
-@keyframes depthPulse {
-  0%, 100% { transform: translateZ(0px) scale(1); }
-  50%       { transform: translateZ(12px) scale(1.02); }
-}
-
 
 /* ── Animation Utility Classes ─────────────────────────────────────────────── */
 
