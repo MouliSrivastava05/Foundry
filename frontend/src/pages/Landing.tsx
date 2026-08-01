@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Zap, CheckCircle, Search, LayoutTemplate, Users, ListChecks, ServerCog, Route, Cpu, DollarSign, FolderGit2, Palette } from 'lucide-react'
+import { ArrowRight, Terminal, Zap, GitBranch, Layers, FileText, Globe, Code2, Cpu, BarChart2, Bot, CheckCircle } from 'lucide-react'
 import { useScrollAnimation } from '../hooks/useScrollAnimation'
 
 // ── Scroll Progress Bar ───────────────────────────────────────────────────────
@@ -96,76 +96,224 @@ const TiltCard: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
 // ── Pipeline Steps ────────────────────────────────────────────────────────────
 const PIPELINE_STEPS = [
   {
-    icon: Search, num: '01', label: 'Market Research',
-    color: '#60A5FA', glow: 'rgba(96,165,250,0.18)',
-    tag: 'RESEARCH AGENT',
-    desc: 'Foundry dispatches a live web-search agent powered by Tavily API. It crawls the real internet — competitor sites, product pages, and tech blogs — returning structured intelligence your PRD is built on.',
-    output: 'Competitor matrix · Market gaps · Trend signals',
+    icon: Globe,     label: 'Research',     color: '#60A5FA', num: '01',
+    desc: 'Live competitor analysis via Tavily web search',
+    detail: 'Foundry dispatches a live-search agent that pulls real company data, funding rounds, and positioning from the web — giving you ground truth, not GPT hallucinations.',
+    output: 'Competitor matrix + market gap analysis',
   },
   {
-    icon: LayoutTemplate, num: '02', label: 'Product Requirements',
-    color: '#A78BFA', glow: 'rgba(167,139,250,0.18)',
-    tag: 'PRD AGENT',
-    desc: 'Using research findings as its context, the PRD agent drafts a full Product Requirements Document — product vision, feature list, success metrics, and constraint boundaries. No blank page. Ever.',
-    output: 'Vision statement · Feature inventory · KPIs',
+    icon: FileText,  label: 'PRD',          color: '#A78BFA', num: '02',
+    desc: 'Full product requirements document',
+    detail: 'Using the research as context, this agent drafts your entire PRD — problem statement, personas, success metrics, and scope. Everything a PM writes in a week, done in seconds.',
+    output: 'Structured PRD with goals, KPIs & scope',
   },
   {
-    icon: Users, num: '03', label: 'User Personas',
-    color: '#F472B6', glow: 'rgba(244,114,182,0.18)',
-    tag: 'PERSONA AGENT',
-    desc: 'The persona agent synthesizes the PRD and research into 2–3 richly detailed archetypes. Each persona has a job, a goal, a frustration, and a reason they need your product.',
-    output: 'Named archetypes · Goal-frustration pairs · Quotes',
+    icon: Bot,       label: 'Personas',     color: '#F472B6', num: '03',
+    desc: 'Target user archetypes & pain points',
+    detail: 'Generates 2–4 detailed user personas grounded in the market research — names, roles, goals, frustrations, and the specific job-to-be-done your product solves.',
+    output: '3 rich user personas with empathy maps',
   },
   {
-    icon: ListChecks, num: '04', label: 'Agile User Stories',
-    color: '#34D399', glow: 'rgba(52,211,153,0.18)',
-    tag: 'STORIES AGENT',
-    desc: 'Every feature from the PRD is decomposed into atomic, developer-ready user stories following the "As a / I want / So that" format with acceptance criteria. Ready to paste into Jira.',
-    output: '14–20 stories · Acceptance criteria · Story IDs',
+    icon: Layers,    label: 'Agile Scope',  color: '#34D399', num: '04',
+    desc: 'User stories & MoSCoW prioritization',
+    detail: "Translates the PRD into an Agile backlog of user stories in the format \"As a [persona], I want to…\" then applies MoSCoW (Must/Should/Could/Won’t) prioritization for your MVP.",
+    output: '14+ user stories with priority labels',
   },
   {
-    icon: ServerCog, num: '05', label: 'MoSCoW Prioritization',
-    color: '#F97316', glow: 'rgba(249,115,22,0.18)',
-    tag: 'PRIORITIZATION AGENT',
-    desc: 'An AI strategist reads all user stories and classifies each as Must Have, Should Have, Could Have, or Won\'t Have — aligning scope to your MVP launch window without cutting what matters.',
-    output: 'Tiered backlog · MVP scope boundary · Priority rationale',
+    icon: Cpu,       label: 'Architecture', color: '#F97316', num: '05',
+    desc: 'Database schema & REST API design',
+    detail: 'Designs the technical foundation: normalized database tables, relationships, and a complete REST API route spec — including methods, paths, and descriptions for every endpoint.',
+    output: 'DB schema + 20+ documented API routes',
   },
   {
-    icon: Route, num: '06', label: 'Sprint Roadmap',
-    color: '#FCD34D', glow: 'rgba(252,211,77,0.18)',
-    tag: 'ROADMAP AGENT',
-    desc: 'Stories are sequenced across four two-week sprints. Sprint 1 lays the foundation, Sprint 4 ships to production. Each sprint has a theme, a goal, and a curated set of story IDs to execute.',
-    output: '4-sprint plan · Sprint themes · Delivery milestones',
+    icon: BarChart2, label: 'Roadmap',      color: '#FCD34D', num: '06',
+    desc: '4-sprint milestone delivery plan',
+    detail: 'Maps each user story to one of four 2-week sprints, sequencing by dependency. Sprint 1 is always foundation & auth. Sprint 4 is always testing & launch — no guessing.',
+    output: '4-sprint plan with story IDs per sprint',
   },
   {
-    icon: Cpu, num: '07', label: 'Technical Architecture',
-    color: '#6EE7B7', glow: 'rgba(110,231,183,0.18)',
-    tag: 'ARCHITECTURE AGENT',
-    desc: 'A staff-level engineer agent designs your database schema (tables, columns, relationships) and the full REST API surface (method + path + description). This is real code-ready specification.',
-    output: 'DB schema · API route table · Relationship map',
+    icon: Code2,     label: 'FinOps',       color: '#6EE7B7', num: '07',
+    desc: 'Cloud cost model at 3 scale tiers',
+    detail: 'Estimates your monthly cloud infrastructure cost at 100, 1,000, and 10,000 active users — broken down by compute, database, and CDN, so you can plan your unit economics.',
+    output: 'Cost breakdown at 3 scale tiers',
   },
   {
-    icon: DollarSign, num: '08', label: 'Cloud Cost Model',
-    color: '#93C5FD', glow: 'rgba(147,197,253,0.18)',
-    tag: 'FINOPS AGENT',
-    desc: 'The FinOps agent estimates your monthly AWS/GCP infrastructure bill at three scale checkpoints — 100, 1,000, and 10,000 active users — broken down by Compute, Database, and CDN.',
-    output: 'Cost breakdown · 3-tier projections · Budget guard-rails',
+    icon: GitBranch, label: 'Scaffolding',  color: '#93C5FD', num: '08',
+    desc: 'Repo structure & setup instructions',
+    detail: 'Generates a ready-to-clone folder structure for your stack, plus a step-by-step onboarding script so any engineer can spin up the dev environment in minutes.',
+    output: 'File tree + setup CLI commands',
   },
   {
-    icon: FolderGit2, num: '09', label: 'Repo Scaffolding',
-    color: '#C4B5FD', glow: 'rgba(196,181,253,0.18)',
-    tag: 'SCAFFOLDING AGENT',
-    desc: 'Generates the exact folder structure for your monorepo — frontend, backend, infra, and CI config — plus the terminal commands to bootstrap it from zero. Clone → run → build.',
-    output: 'File tree · Bootstrap commands · .env template',
+    icon: Terminal,  label: 'UI Blueprint', color: '#C4B5FD', num: '09',
+    desc: 'Live HTML/CSS prototype generation',
+    detail: 'Creates a fully interactive HTML/CSS mockup of your core landing page or app view — styled, responsive, and rendered live in an iframe. Not a wireframe. A real prototype.',
+    output: 'Interactive HTML/CSS prototype (live preview)',
   },
   {
-    icon: Palette, num: '10', label: 'UI Blueprint + PDF',
-    color: '#FB923C', glow: 'rgba(251,146,60,0.18)',
-    tag: 'UI & EXPORT AGENT',
-    desc: 'The final agent renders a live HTML/CSS prototype of your core landing page and compiles the entire 10-agent output into a polished, investor-ready 11-page PDF. One click. Zero formatting.',
-    output: 'Live HTML preview · 11-page PDF · Share-ready link',
+    icon: Zap,       label: 'PDF Export',   color: '#FBBF24', num: '10',
+    desc: '11-page downloadable spec document',
+    detail: 'Compiles every agent output into a single, beautifully formatted 11-page PDF — ready to attach to an investor email, hand to a dev team, or drop into Notion.',
+    output: '11-page formatted PDF blueprint',
   },
 ]
+
+// ── Cinematic Pipeline Timeline ───────────────────────────────────────────────
+const CinematicPipeline: React.FC = () => {
+  const itemRefs = useRef<(HTMLDivElement | null)[]>([])
+  const lineRef  = useRef<HTMLDivElement>(null)
+  const [lineH, setLineH] = useState(0)
+
+  useEffect(() => {
+    const update = () => {
+      const items = itemRefs.current.filter(Boolean)
+      if (!items.length) return
+      const first = items[0]!.getBoundingClientRect()
+      const last  = items[items.length - 1]!.getBoundingClientRect()
+      const container = lineRef.current?.parentElement?.getBoundingClientRect()
+      if (!container) return
+      setLineH(last.bottom - first.top - (first.height / 2))
+    }
+    update()
+    window.addEventListener('resize', update)
+    return () => window.removeEventListener('resize', update)
+  }, [])
+
+  return (
+    <div style={{ position: 'relative', maxWidth: 900, margin: '0 auto' }}>
+      {/* Vertical connector spine */}
+      <div style={{
+        position: 'absolute',
+        left: '50%',
+        top: 0,
+        transform: 'translateX(-50%)',
+        width: 2,
+        height: lineH || '100%',
+        background: 'linear-gradient(to bottom, transparent, var(--accent) 8%, var(--silver) 50%, var(--accent) 92%, transparent)',
+        opacity: 0.25,
+        pointerEvents: 'none',
+      }} ref={lineRef} />
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+        {PIPELINE_STEPS.map((step, i) => {
+          const isLeft = i % 2 === 0 // even = content on left, node right; odd = content right, node left
+          return (
+            <div
+              key={i}
+              ref={el => { itemRefs.current[i] = el }}
+              className="scroll-animate"
+              data-animate
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 56px 1fr',
+                alignItems: 'center',
+                gap: 0,
+                marginBottom: i < PIPELINE_STEPS.length - 1 ? 0 : 0,
+                transitionDelay: `${i * 50}ms`,
+              } as React.CSSProperties}
+            >
+              {/* Left column */}
+              <div style={{
+                padding: '28px 32px 28px 0',
+                textAlign: isLeft ? 'right' : 'left',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: isLeft ? 'flex-end' : 'flex-start',
+                opacity: isLeft ? 1 : 0,
+                pointerEvents: isLeft ? 'auto' : 'none',
+              }}>
+                {isLeft && (
+                  <>
+                    <div style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 8,
+                      background: `${step.color}12`,
+                      border: `1px solid ${step.color}28`,
+                      borderRadius: 10, padding: '6px 12px',
+                      marginBottom: 12,
+                    }}>
+                      <step.icon size={14} color={step.color} strokeWidth={2} />
+                      <span style={{ fontSize: 12, fontWeight: 700, color: step.color, letterSpacing: '-0.01em' }}>{step.label}</span>
+                    </div>
+                    <p style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.65, marginBottom: 10, maxWidth: 340 }}>
+                      {step.detail}
+                    </p>
+                    <div style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 6,
+                      background: 'var(--bg-elevated)', border: '1px solid var(--border)',
+                      borderRadius: 6, padding: '4px 10px',
+                    }}>
+                      <span style={{ fontSize: 10, color: 'var(--accent)', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase' }}>OUTPUT</span>
+                      <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{step.output}</span>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* Centre node */}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', zIndex: 2 }}>
+                <div style={{
+                  width: 44, height: 44, borderRadius: '50%',
+                  background: `radial-gradient(circle, ${step.color}22 0%, var(--bg-base) 70%)`,
+                  border: `1.5px solid ${step.color}60`,
+                  boxShadow: `0 0 18px ${step.color}28, 0 0 40px ${step.color}12`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  position: 'relative',
+                }}>
+                  <step.icon size={16} color={step.color} strokeWidth={1.75} />
+                  {/* Step number bubble */}
+                  <span style={{
+                    position: 'absolute', top: -6, right: -6,
+                    width: 16, height: 16, borderRadius: '50%',
+                    background: 'var(--bg-base)', border: `1px solid ${step.color}50`,
+                    fontSize: 8, fontWeight: 800, color: step.color,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontFamily: 'var(--font-mono)',
+                  }}>{step.num}</span>
+                </div>
+              </div>
+
+              {/* Right column */}
+              <div style={{
+                padding: '28px 0 28px 32px',
+                textAlign: isLeft ? 'left' : 'left',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+                opacity: isLeft ? 0 : 1,
+                pointerEvents: isLeft ? 'none' : 'auto',
+              }}>
+                {!isLeft && (
+                  <>
+                    <div style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 8,
+                      background: `${step.color}12`,
+                      border: `1px solid ${step.color}28`,
+                      borderRadius: 10, padding: '6px 12px',
+                      marginBottom: 12,
+                    }}>
+                      <step.icon size={14} color={step.color} strokeWidth={2} />
+                      <span style={{ fontSize: 12, fontWeight: 700, color: step.color, letterSpacing: '-0.01em' }}>{step.label}</span>
+                    </div>
+                    <p style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.65, marginBottom: 10, maxWidth: 340 }}>
+                      {step.detail}
+                    </p>
+                    <div style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 6,
+                      background: 'var(--bg-elevated)', border: '1px solid var(--border)',
+                      borderRadius: 6, padding: '4px 10px',
+                    }}>
+                      <span style={{ fontSize: 10, color: 'var(--accent)', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase' }}>OUTPUT</span>
+                      <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{step.output}</span>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
 
 // ── Testimonials ──────────────────────────────────────────────────────────────
 const TESTIMONIALS = [
@@ -183,274 +331,7 @@ const TESTIMONIALS = [
   },
 ]
 
-// ── Pipeline Section — Cinematic Sticky Scroll ────────────────────────────────
-const PipelineSection: React.FC = () => {
-  const sectionRef = useRef<HTMLDivElement>(null)
-  const [activeIdx, setActiveIdx] = useState(0)
-  const [lineHeight, setLineHeight] = useState(0)
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const el = sectionRef.current
-      if (!el) return
-      const rect = el.getBoundingClientRect()
-      const sectionTop = -rect.top
-      const sectionHeight = rect.height - window.innerHeight
-      if (sectionTop < 0) { setActiveIdx(0); setLineHeight(0); return }
-      if (sectionTop > sectionHeight) { setActiveIdx(PIPELINE_STEPS.length - 1); setLineHeight(100); return }
-      const progress = sectionTop / sectionHeight
-      const idx = Math.min(Math.floor(progress * PIPELINE_STEPS.length), PIPELINE_STEPS.length - 1)
-      setActiveIdx(idx)
-      setLineHeight(progress * 100)
-    }
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    handleScroll()
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
-  const active = PIPELINE_STEPS[activeIdx]
-
-  return (
-    <section
-      ref={sectionRef}
-      style={{ position: 'relative', height: `${PIPELINE_STEPS.length * 100}vh` }}
-    >
-      <div style={{
-        position: 'sticky',
-        top: 0,
-        height: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        overflow: 'hidden',
-      }}>
-        {/* Ambient background glow that follows active agent color */}
-        <div style={{
-          position: 'absolute', inset: 0, pointerEvents: 'none',
-          background: `radial-gradient(ellipse 60% 60% at 70% 50%, ${active.glow}, transparent 70%)`,
-          transition: 'background 0.6s ease',
-        }} />
-
-        {/* Section header */}
-        <div style={{ textAlign: 'center', marginBottom: 48, position: 'relative', zIndex: 2 }}>
-          <p className="text-gradient-silver" style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 12 }}>
-            The Pipeline
-          </p>
-          <h2 style={{ fontSize: 'clamp(28px, 3.5vw, 40px)', fontWeight: 900, letterSpacing: '-0.04em', marginBottom: 10 }}>
-            10 agents.{' '}
-            <span className="text-gradient-premium">One blueprint.</span>
-          </h2>
-          <p style={{ fontSize: 14, color: 'var(--text-tertiary)', maxWidth: 420, margin: '0 auto', lineHeight: 1.65 }}>
-            Each agent takes the output from the previous and builds upon it — a single, coherent AI workflow.
-          </p>
-        </div>
-
-        {/* Main content row */}
-        <div style={{
-          display: 'flex',
-          gap: 0,
-          maxWidth: 1100,
-          width: '100%',
-          margin: '0 auto',
-          padding: '0 24px',
-          alignItems: 'center',
-          position: 'relative',
-          zIndex: 2,
-        }}>
-
-          {/* LEFT: Timeline spine + step list */}
-          <div style={{ flex: '0 0 320px', position: 'relative', paddingLeft: 36 }}>
-            {/* Spine track */}
-            <div style={{
-              position: 'absolute', left: 10, top: 0, bottom: 0,
-              width: 2, background: 'var(--border)', borderRadius: 2,
-            }} />
-            {/* Animated fill */}
-            <div style={{
-              position: 'absolute', left: 10, top: 0,
-              width: 2, borderRadius: 2,
-              height: `${lineHeight}%`,
-              background: `linear-gradient(to bottom, ${active.color}, ${active.color}80)`,
-              boxShadow: `0 0 12px ${active.color}60`,
-              transition: 'height 0.08s linear, background 0.5s ease, box-shadow 0.5s ease',
-            }} />
-
-            {/* Step list */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-              {PIPELINE_STEPS.map((step, i) => {
-                const isActive = i === activeIdx
-                const isPast = i < activeIdx
-                return (
-                  <div key={i} style={{
-                    display: 'flex', alignItems: 'center', gap: 14,
-                    padding: '10px 0',
-                    opacity: isActive ? 1 : isPast ? 0.55 : 0.3,
-                    transition: 'opacity 0.3s ease',
-                  }}>
-                    {/* Node on spine */}
-                    <div style={{
-                      position: 'absolute', left: 4,
-                      width: 14, height: 14, borderRadius: '50%',
-                      background: isActive ? step.color : isPast ? `${step.color}60` : 'var(--bg-elevated)',
-                      border: `2px solid ${isActive ? step.color : isPast ? `${step.color}40` : 'var(--border)'}`,
-                      boxShadow: isActive ? `0 0 10px ${step.color}80, 0 0 20px ${step.color}40` : 'none',
-                      transition: 'all 0.4s ease',
-                      flexShrink: 0,
-                    }} />
-                    <span style={{
-                      fontSize: 11, fontFamily: 'var(--font-mono)',
-                      fontWeight: 700, color: isActive ? step.color : 'var(--text-muted)',
-                      letterSpacing: '0.04em', flexShrink: 0,
-                      transition: 'color 0.3s ease',
-                    }}>
-                      {step.num}
-                    </span>
-                    <span style={{
-                      fontSize: isActive ? 14 : 13,
-                      fontWeight: isActive ? 700 : 500,
-                      color: isActive ? 'var(--text-primary)' : 'var(--text-tertiary)',
-                      transition: 'all 0.3s ease',
-                      letterSpacing: isActive ? '-0.02em' : 0,
-                    }}>
-                      {step.label}
-                    </span>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-
-          {/* RIGHT: Active agent spotlight */}
-          <div style={{ flex: 1, paddingLeft: 56 }}>
-            <div
-              key={activeIdx}
-              style={{
-                background: 'var(--bg-surface)',
-                border: `1px solid ${active.color}30`,
-                borderRadius: 20,
-                padding: '36px 40px',
-                boxShadow: `0 0 0 1px ${active.color}15, 0 24px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04)`,
-                animation: 'pipelineSlideIn 0.35s cubic-bezier(0.16,1,0.3,1)',
-              }}
-            >
-              {/* Agent tag badge */}
-              <div style={{
-                display: 'inline-flex', alignItems: 'center', gap: 7,
-                background: `${active.color}12`,
-                border: `1px solid ${active.color}30`,
-                borderRadius: 100, padding: '4px 12px', marginBottom: 22,
-              }}>
-                <div style={{
-                  width: 6, height: 6, borderRadius: '50%',
-                  background: active.color,
-                  boxShadow: `0 0 6px ${active.color}`,
-                  animation: 'pulse 1.8s ease-in-out infinite',
-                }} />
-                <span style={{
-                  fontSize: 10, fontWeight: 800, letterSpacing: '0.14em',
-                  color: active.color, textTransform: 'uppercase',
-                  fontFamily: 'var(--font-mono)',
-                }}>
-                  {active.tag}
-                </span>
-              </div>
-
-              {/* Icon + step title */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 18 }}>
-                <div style={{
-                  width: 52, height: 52, borderRadius: 14,
-                  background: `${active.color}14`,
-                  border: `1px solid ${active.color}30`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  boxShadow: `0 0 24px ${active.color}20`,
-                  flexShrink: 0,
-                }}>
-                  <active.icon size={24} color={active.color} strokeWidth={1.5} />
-                </div>
-                <div>
-                  <div style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', marginBottom: 4, letterSpacing: '0.06em' }}>
-                    STEP {active.num} / 10
-                  </div>
-                  <h3 style={{
-                    fontSize: 26, fontWeight: 900, letterSpacing: '-0.04em',
-                    color: 'var(--text-primary)', lineHeight: 1.1,
-                  }}>
-                    {active.label}
-                  </h3>
-                </div>
-              </div>
-
-              {/* Description */}
-              <p style={{
-                fontSize: 15, color: 'var(--text-secondary)',
-                lineHeight: 1.75, marginBottom: 26,
-                borderLeft: `2px solid ${active.color}35`,
-                paddingLeft: 16,
-              }}>
-                {active.desc}
-              </p>
-
-              {/* Output pill row */}
-              <div>
-                <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-muted)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 10 }}>
-                  Output
-                </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                  {active.output.split(' · ').map((item, i) => (
-                    <span key={i} style={{
-                      fontSize: 12, fontWeight: 500,
-                      color: active.color,
-                      background: `${active.color}0D`,
-                      border: `1px solid ${active.color}25`,
-                      borderRadius: 8, padding: '5px 12px',
-                    }}>
-                      {item}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Progress bar */}
-            <div style={{ marginTop: 18, display: 'flex', alignItems: 'center', gap: 10, paddingLeft: 4 }}>
-              <div style={{ flex: 1, height: 2, background: 'var(--border)', borderRadius: 2, overflow: 'hidden' }}>
-                <div style={{
-                  height: '100%', borderRadius: 2,
-                  width: `${((activeIdx + 1) / PIPELINE_STEPS.length) * 100}%`,
-                  background: `linear-gradient(to right, ${active.color}, ${active.color}90)`,
-                  transition: 'width 0.3s ease, background 0.5s ease',
-                }} />
-              </div>
-              <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', flexShrink: 0 }}>
-                {activeIdx + 1} / {PIPELINE_STEPS.length}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Scroll hint */}
-        <div style={{
-          position: 'absolute', bottom: 28, left: '50%', transform: 'translateX(-50%)',
-          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
-          opacity: activeIdx === 0 ? 1 : 0,
-          transition: 'opacity 0.4s ease',
-          pointerEvents: 'none',
-        }}>
-          <span style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
-            Scroll to explore
-          </span>
-          <div style={{
-            width: 1, height: 28,
-            background: 'linear-gradient(to bottom, var(--text-muted), transparent)',
-          }} />
-        </div>
-      </div>
-    </section>
-  )
-}
-
 // ── Main Landing Component ────────────────────────────────────────────────────
-
 export const Landing: React.FC = () => {
   const pageRef = useRef<HTMLDivElement>(null)
   useScrollAnimation(pageRef)
@@ -585,8 +466,36 @@ export const Landing: React.FC = () => {
         <hr className="divider-metallic" style={{ marginTop: 28 }} />
       </section>
 
-      {/* ── Pipeline — Cinematic Sticky Scroll ─────────────────────────────── */}
-      <PipelineSection />
+      {/* ── Pipeline ─── Cinematic vertical timeline ──────────────────────── */}
+      <section style={{ padding: '100px 24px 120px' }}>
+        <div className="container">
+
+          {/* Section header */}
+          <div className="scroll-animate" data-animate style={{ textAlign: 'center', marginBottom: 80 }}>
+            <p className="text-gradient-silver" style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 14 }}>
+              The Pipeline
+            </p>
+            <h2 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 900, letterSpacing: '-0.04em', marginBottom: 16, lineHeight: 1.08 }}>
+              10 agents.{' '}
+              <span className="text-gradient-premium">One blueprint.</span>
+            </h2>
+            <p style={{ fontSize: 15, color: 'var(--text-secondary)', maxWidth: 520, margin: '0 auto', lineHeight: 1.7 }}>
+              Every agent consumes the output of the previous one — building a single, coherent specification, not ten disconnected fragments.
+            </p>
+
+            {/* Flow hint */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 28 }}>
+              <div style={{ width: 20, height: 1, background: 'var(--border)' }} />
+              <span style={{ fontSize: 11, color: 'var(--text-tertiary)', letterSpacing: '0.08em' }}>scroll to follow the workflow</span>
+              <div style={{ width: 20, height: 1, background: 'var(--border)' }} />
+            </div>
+          </div>
+
+          {/* Cinematic timeline */}
+          <CinematicPipeline />
+
+        </div>
+      </section>
 
       {/* ── What you get ───────────────────────────────────────────────────── */}
       <section style={{ padding: '80px 24px', background: 'var(--bg-surface)' }}>
