@@ -418,80 +418,80 @@ export const Dashboard: React.FC = () => {
         let progress = 10
 
         if (formatted.research) {
-          logs.push('🔍 [Market Scoper] Competitor research scraped and compiled successfully.')
+          logs.push('[Market Scoper] Competitor research scraped and compiled successfully.')
           step = 1
           progress = 25
         } else {
-          logs.push('🔍 [Market Scoper] Scraping competitor trends and opportunity gaps...')
+          logs.push('[Market Scoper] Scraping competitor trends and opportunity gaps...')
         }
 
         if (formatted.prd) {
-          logs.push('📝 [PRD Architect] PRD Specs generated successfully.')
+          logs.push('[PRD Architect] PRD Specs generated successfully.')
           step = 2
           progress = 40
         } else if (formatted.research) {
-          logs.push('📝 [PRD Architect] Scoping technical specification documents and core features...')
+          logs.push('[PRD Architect] Scoping technical specification documents and core features...')
         }
 
         if (formatted.personas && formatted.personas.length > 0) {
-          logs.push('👥 [Persona Agent] User personas simulated successfully.')
+          logs.push('[Persona Agent] User personas simulated successfully.')
           step = 3
           progress = 55
         } else if (formatted.prd) {
-          logs.push('👥 [Persona Agent] Simulating customer behavior archetypes and goals...')
+          logs.push('[Persona Agent] Simulating customer behavior archetypes and goals...')
         }
 
         if (formatted.userStories && formatted.userStories.length > 0) {
-          logs.push('🎯 [Story Writer] Agile user stories generated successfully.')
+          logs.push('[Story Writer] Agile user stories generated successfully.')
           step = 4
           progress = 70
         } else if (formatted.personas && formatted.personas.length > 0) {
-          logs.push('🎯 [Story Writer] Writing epic user stories and validation acceptance criteria...')
+          logs.push('[Story Writer] Writing epic user stories and validation acceptance criteria...')
         }
 
         if (formatted.prioritization && formatted.prioritization.mustHave.length > 0) {
-          logs.push('⚡ [Prioritization Agent] Sprint priorities and MoSCoW score matrices resolved.')
+          logs.push('[Prioritization Agent] Sprint priorities and MoSCoW score matrices resolved.')
           step = 5
           progress = 80
         } else if (formatted.userStories && formatted.userStories.length > 0) {
-          logs.push('⚡ [Prioritization Agent] Calculating priority scores and sprint milestones...')
+          logs.push('[Prioritization Agent] Calculating priority scores and sprint milestones...')
         }
 
         if (formatted.architecture) {
-          logs.push('💻 [System Architect] Database designs and API endpoint routes structured.')
+          logs.push('[System Architect] Database designs and API endpoint routes structured.')
           step = 6
           progress = 90
         } else if (formatted.prioritization && formatted.prioritization.mustHave.length > 0) {
-          logs.push('💻 [System Architect] Modeling DB schemas and REST endpoint routes...')
+          logs.push('[System Architect] Modeling DB schemas and REST endpoint routes...')
         }
 
         if (formatted.roadmap) {
-          logs.push('📅 [Sprint planner] Sequences and dependencies mapped to 4-sprint roadmap.')
+          logs.push('[Sprint planner] Sequences and dependencies mapped to 4-sprint roadmap.')
           step = 7
           progress = 95
         } else if (formatted.architecture) {
-          logs.push('📅 [Sprint planner] Generating product release roadmap and task distributions...')
+          logs.push('[Sprint planner] Generating product release roadmap and task distributions...')
         }
 
         if (formatted.costEstimate && formatted.scaffolding) {
-          logs.push('🪙 [FinOps Estimator] Scaling costs calculated for 100, 1k, and 10k users.')
-          logs.push('📂 [Code Scaffolder] Ascii repository file trees and setup scripts drafted.')
+          logs.push('[FinOps Estimator] Scaling costs calculated for 100, 1k, and 10k users.')
+          logs.push('[Code Scaffolder] Ascii repository file trees and setup scripts drafted.')
           step = 8
           progress = 98
         } else if (formatted.roadmap) {
-          logs.push('🪙 [FinOps Estimator] Running compute, database, and CDN pricing simulations...')
-          logs.push('📂 [Code Scaffolder] Compiling directory structure layouts and instructions...')
+          logs.push('[FinOps Estimator] Running compute, database, and CDN pricing simulations...')
+          logs.push('[Code Scaffolder] Compiling directory structure layouts and instructions...')
         }
 
         if (currentProject.status === 'completed') {
-          logs.push('✅ [SYS] Scaffolding pipeline executed successfully. Blueprint cached.')
+          logs.push('[SYS] Scaffolding pipeline executed successfully. Blueprint cached.')
           step = 9
           progress = 100
           clearInterval(intervalId)
           setProjects(prev => prev.map(p => p.id === currentProject.id ? currentProject : p))
           setSelectedProject(currentProject)
         } else if (currentProject.status === 'failed') {
-          logs.push('❌ [SYS] AI orchestrator execution failed. Please verify API configurations.')
+          logs.push('[SYS] AI orchestrator execution failed. Please verify API configurations.')
           step = -2
           progress = 0
           clearInterval(intervalId)
@@ -521,11 +521,11 @@ export const Dashboard: React.FC = () => {
 
     const stepDuration = 2000
     const steps = [
-      { log: '🔍 [Market Scoper] Scraping sector trends and competitor indices...', progress: 20 },
-      { log: '📝 [PRD Architect] Scoping technical specification documents and core features...', progress: 45 },
-      { log: '👥 [Persona Agent] Simulating customer behavior archetypes and goals...', progress: 65 },
-      { log: '🎯 [Story Writer] Writing epic user stories and validation acceptance criteria...', progress: 85 },
-      { log: '⚡ [Prioritization Agent] Calculating priority scores and sprint milestones...', progress: 100 }
+      { log: '[Market Scoper] Scraping sector trends and competitor indices...', progress: 20 },
+      { log: '[PRD Architect] Scoping technical specification documents and core features...', progress: 45 },
+      { log: '[Persona Agent] Simulating customer behavior archetypes and goals...', progress: 65 },
+      { log: '[Story Writer] Writing epic user stories and validation acceptance criteria...', progress: 85 },
+      { log: '[Prioritization Agent] Calculating priority scores and sprint milestones...', progress: 100 }
     ]
 
     const timer = setTimeout(() => {
