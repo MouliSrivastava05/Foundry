@@ -31,6 +31,7 @@ import {
   Edit2,
   X,
   Check,
+  Zap,
   Settings as SettingsIcon
 } from 'lucide-react'
 
@@ -731,7 +732,11 @@ export const Dashboard: React.FC = () => {
                     {pipelineStep === -2 ? (
                       <div className="h-12 w-12 rounded-xl bg-red-500/10 border border-red-500/30 text-red-500 mx-auto flex items-center justify-center font-bold text-2xl">⚠️</div>
                     ) : (
-                      <Activity className="h-10 w-10 text-amber-500 animate-spin mx-auto" />
+                      <div className="relative mx-auto w-16 h-16 flex items-center justify-center">
+                        <div className="absolute inset-0 rounded-full border-t-2 border-amber-500/80 border-r-2 border-r-transparent border-b-2 border-b-amber-500/20 border-l-2 border-l-transparent animate-spin" style={{ animationDuration: '1.2s' }}></div>
+                        <div className="absolute inset-2 rounded-full border-t-2 border-transparent border-r-2 border-r-amber-400/60 border-b-2 border-transparent border-l-2 border-l-amber-400/20 animate-spin" style={{ animationDuration: '0.8s', animationDirection: 'reverse' }}></div>
+                        <Zap className="h-5 w-5 text-amber-400 animate-pulse" />
+                      </div>
                     )}
                     <h3 className="text-xl font-bold text-white">
                       {pipelineStep === -2 ? "Pipeline Execution Failed" : "Orchestrating AI Workflow Agents"}
