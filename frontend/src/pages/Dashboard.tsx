@@ -954,7 +954,7 @@ export const Dashboard: React.FC = () => {
                           />
                         }
                         fileName={`${(selectedProject?.title ?? 'blueprint').toLowerCase().replace(/\s+/g, '-')}-foundry-blueprint.pdf`}
-                        className="mb-2 text-xs bg-violet-700 hover:bg-violet-600 text-white transition px-3 py-1.5 rounded-lg flex items-center gap-1.5 font-medium"
+                        className="mb-2 text-xs bg-amber-600 hover:bg-amber-500 text-white transition px-3 py-1.5 rounded-lg flex items-center gap-1.5 font-medium"
                       >
                         {({ loading }) => (
                           <>
