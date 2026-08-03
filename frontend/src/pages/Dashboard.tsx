@@ -32,6 +32,8 @@ import {
   X,
   Check,
   Zap,
+  Globe,
+  Cpu,
   Settings as SettingsIcon
 } from 'lucide-react'
 
@@ -739,7 +741,7 @@ export const Dashboard: React.FC = () => {
                       </div>
                     )}
                     <h3 className="text-xl font-bold text-white">
-                      {pipelineStep === -2 ? "Pipeline Execution Failed" : "Orchestrating AI Workflow Agents"}
+                      {pipelineStep === -2 ? "Pipeline Execution Failed" : `Orchestrating AI Workflow Agents (${pipelineProgress}%)`}
                     </h3>
                     <p className="text-sm text-slate-400">
                       {pipelineStep === -2 
@@ -748,18 +750,47 @@ export const Dashboard: React.FC = () => {
                     </p>
                   </div>
 
-                  {/* Progress Bar */}
+                  {/* Pipeline Node Graph */}
                   {pipelineStep !== -2 && (
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-xs font-semibold text-slate-400">
-                        <span>Analyzing Concept</span>
-                        <span>{pipelineProgress}% Complete</span>
-                      </div>
-                      <div className="w-full h-2.5 bg-slate-900 rounded-full overflow-hidden">
+                    <div className="py-8 mb-4">
+                      <div className="flex items-center justify-between relative px-2">
+                        {/* Connecting background line */}
+                        <div className="absolute top-5 left-0 w-full h-1 bg-slate-800 rounded-full z-0"></div>
+                        {/* Active progress line */}
                         <div 
-                          className="h-full bg-gradient-to-r from-amber-500 to-orange-500 transition-all duration-500" 
-                          style={{ width: `${pipelineProgress}%` }}
+                          className="absolute top-5 left-0 h-1 bg-amber-500 rounded-full z-0 transition-all duration-700 ease-in-out shadow-[0_0_10px_rgba(245,158,11,0.5)]"
+                          style={{ width: `${Math.min(100, Math.max(0, (pipelineStep / 4) * 100))}%` }}
                         ></div>
+                        
+                        {[
+                          { icon: Globe, label: 'Research' },
+                          { icon: FileText, label: 'PRD' },
+                          { icon: Users, label: 'Personas' },
+                          { icon: Cpu, label: 'Architecture' },
+                          { icon: Zap, label: 'Export' }
+                        ].map((node, i) => {
+                          const isActive = i === pipelineStep
+                          const isCompleted = i < pipelineStep
+                          
+                          return (
+                            <div key={i} className="relative z-10 flex flex-col items-center">
+                              <div className={`
+                                w-10 h-10 rounded-full flex items-center justify-center transition-all duration-500 border-2
+                                ${isActive ? 'bg-amber-500 border-amber-400 text-slate-950 shadow-[0_0_20px_rgba(245,158,11,0.6)] scale-110' : 
+                                  isCompleted ? 'bg-slate-800 border-amber-500 text-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.2)]' : 
+                                  'bg-slate-900 border-slate-700 text-slate-500'}
+                              `}>
+                                <node.icon className={`w-5 h-5 ${isActive ? 'animate-pulse' : ''}`} />
+                              </div>
+                              <span className={`
+                                text-[11px] font-bold absolute -bottom-7 whitespace-nowrap transition-colors duration-300 uppercase tracking-wider
+                                ${isActive ? 'text-amber-400' : isCompleted ? 'text-slate-300' : 'text-slate-600'}
+                              `}>
+                                {node.label}
+                              </span>
+                            </div>
+                          )
+                        })}
                       </div>
                     </div>
                   )}
