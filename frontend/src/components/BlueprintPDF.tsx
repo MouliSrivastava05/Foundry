@@ -13,15 +13,15 @@ import {
 
 // ── Design Tokens ─────────────────────────────────────────────────────────────
 const C = {
-  bg:           '#0D0D1A',
-  bgCard:       '#12121F',
-  bgCardAlt:    '#16162A',
-  bgTable:      '#0A0A14',
-  border:       '#1E1E3A',
-  borderLight:  '#252545',
-  accent:       '#7C3AED',
-  accentLight:  '#A78BFA',
-  accentMid:    '#6D28D9',
+  bg:           '#020617', // slate-950
+  bgCard:       '#0f172a', // slate-900
+  bgCardAlt:    '#1e293b', // slate-800
+  bgTable:      '#000000', // pure black
+  border:       '#1e293b', // slate-800
+  borderLight:  '#334155', // slate-700
+  accent:       '#F59E0B', // amber-500
+  accentLight:  '#FBBF24', // amber-400
+  accentMid:    '#D97706', // amber-600
   blue:         '#3B82F6',
   teal:         '#06B6D4',
   green:        '#10B981',
@@ -67,9 +67,9 @@ const styles = StyleSheet.create({
     paddingVertical: 40,
   },
   coverEyebrow: {
-    backgroundColor: '#7C3AED33',
+    backgroundColor: '#F59E0B33',
     borderWidth: 1,
-    borderColor: '#7C3AED66',
+    borderColor: '#F59E0B66',
     borderRadius: 100,
     paddingHorizontal: 14,
     paddingVertical: 5,
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
   tocIcon: {
     width: 26,
     height: 22,
-    backgroundColor: '#7C3AED18',
+    backgroundColor: '#F59E0B18',
     borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   sectionBadge: {
-    backgroundColor: '#7C3AED25',
+    backgroundColor: '#F59E0B25',
     borderRadius: 4,
     paddingHorizontal: 9,
     paddingVertical: 3,
@@ -514,9 +514,9 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     paddingHorizontal: 7,
     paddingVertical: 3,
-    backgroundColor: '#7C3AED20',
+    backgroundColor: '#F59E0B20',
     borderWidth: 1,
-    borderColor: '#7C3AED44',
+    borderColor: '#F59E0B44',
   },
   chipText: {
     fontSize: 7.5,
@@ -638,11 +638,11 @@ const styles = StyleSheet.create({
 
   // ── Insight box ──
   insightBox: {
-    backgroundColor: '#7C3AED14',
+    backgroundColor: '#F59E0B14',
     borderRadius: 8,
     padding: 14,
     borderWidth: 1,
-    borderColor: '#7C3AED33',
+    borderColor: '#F59E0B33',
     marginBottom: 10,
   },
   insightText: {
@@ -880,7 +880,7 @@ export const BlueprintPDF: React.FC<BlueprintPDFProps> = ({
               {outputs.prd.features?.map((feat: any, i: number) => (
                 <View key={i} style={[styles.card, styles.gridItem]}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
-                    <View style={{ width: 20, height: 20, backgroundColor: '#7C3AED22', borderRadius: 4, justifyContent: 'center', alignItems: 'center', marginRight: 8 }}>
+                    <View style={{ width: 20, height: 20, backgroundColor: '#F59E0B22', borderRadius: 4, justifyContent: 'center', alignItems: 'center', marginRight: 8 }}>
                       <Text style={{ fontSize: 8, color: C.accentLight, fontFamily: 'Helvetica-Bold' }}>{i + 1}</Text>
                     </View>
                     <Text style={styles.cardTitle}>{feat.name}</Text>
@@ -906,7 +906,7 @@ export const BlueprintPDF: React.FC<BlueprintPDFProps> = ({
               {outputs.personas.map((pers: any, i: number) => (
                 <View key={i} style={[styles.card, styles.gridItem]}>
                   {/* Persona header */}
-                  <View style={{ backgroundColor: '#7C3AED18', borderRadius: 6, padding: 10, marginBottom: 10 }}>
+                  <View style={{ backgroundColor: '#F59E0B18', borderRadius: 6, padding: 10, marginBottom: 10 }}>
                     <Text style={{ fontSize: 13, fontFamily: 'Helvetica-Bold', color: C.white, marginBottom: 2 }}>
                       {pers.name}
                     </Text>
@@ -1111,7 +1111,7 @@ export const BlueprintPDF: React.FC<BlueprintPDFProps> = ({
             <View style={styles.sprintGrid}>
               {[
                 { key: 'sprint_1', label: 'Sprint 1', sub: 'Foundation', color: C.blue, bg: '#3B82F618' },
-                { key: 'sprint_2', label: 'Sprint 2', sub: 'Core MVP', color: C.accent, bg: '#7C3AED18' },
+                { key: 'sprint_2', label: 'Sprint 2', sub: 'Core MVP', color: C.accent, bg: '#F59E0B18' },
                 { key: 'sprint_3', label: 'Sprint 3', sub: 'Advanced', color: C.pink, bg: '#EC489918' },
                 { key: 'sprint_4', label: 'Sprint 4', sub: 'Launch', color: C.green, bg: '#10B98118' },
               ].map((sprint) => (
